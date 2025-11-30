@@ -2,46 +2,35 @@ package logic;
 
 import domain.LogEntry;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.io.BufferedReader;
-import java.time.Instant;
-import java.time.LocalDateTime;
-
-
-import static java.lang.IO.print;
-import static java.lang.IO.println;
+import java.util.Arrays;
+import java.util.Scanner;
+import java.nio.file.Paths;
 
 public class fileOperations extends LogEntry {
-    private ArrayList<LogEntry> logEntries = new ArrayList<>();
-    private int endLine = 5;
-    private LocalDateTime endTime = LocalDateTime.now();
-    //private end = end - startLine; //TODO:
+    private int offset;
+    private int currentLine;
 
     public fileOperations() {
-        this.endLine = 1;
+        this.offset = 1;
+        this.currentLine = 0;
     }
 
-    public void fileParse(String filePath) throws IOException {
-        while (true) {
-            if (endLine <= 0) {
-                break;
-            } else {
-                try (BufferedReader reader = Files.newBufferedReader(
-
-                        Paths.get(filePath), StandardCharsets.UTF_8)) {
-                }
+    public String fileRead() {
+        StringBuilder lines = new StringBuilder();
+        try (Scanner scanner = new Scanner(Paths.get("resources\\test.txt"))) {
+            while (scanner.hasNextLine() && currentLine < offset) {
+                offset++;
+                lines.append(scanner.nextLine());
+                //TODO: ZAMIENIC NA WYKRYWANIE LINIJEK
             }
+            currentLine = offset;
 
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
+        return lines.toString();
     }
 }
 
-
-public void openFile() {
-}
-}
 
 

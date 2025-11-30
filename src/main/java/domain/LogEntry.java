@@ -4,9 +4,10 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 
 public class LogEntry {
-    private int logCount;
     private LocalDateTime dateTime;
     private final HashMap<LOG_LEVEL, Integer> LogLevelCount = new HashMap<>();
+    // TODO: Hashmap <<Tag>, count>
+    private int logCount;
 
     private enum LOG_LEVEL {
         DEBUG, INFO, WARN, ERROR
@@ -15,6 +16,7 @@ public class LogEntry {
     public LogEntry() {
         this.logCount = 0;
         this.dateTime = LocalDateTime.now();
+
     }
 
     public int getLogCount() {
@@ -25,9 +27,8 @@ public class LogEntry {
         return this.logCount = LogLevelCount.keySet().stream().mapToInt(Enum::ordinal).sum();
     }
 
-    public boolean getDateTime(LocalDateTime now) {
-        now = LocalDateTime.now();
-        return (this.dateTime.isAfter(now));
+    public LocalDateTime getDateTime() {
+        return this.dateTime;
     }
 
 }

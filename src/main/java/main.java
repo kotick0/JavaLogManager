@@ -1,6 +1,9 @@
+import logic.Parser;
 import logic.fileOperations;
 
 void main() {
     fileOperations fileOperations = new fileOperations();
-    fileOperations.fileParse();
+    System.out.println(fileOperations.fileRead());
+    Parser test = new Parser();
+    test.detectLine();
 }

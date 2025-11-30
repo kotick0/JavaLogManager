@@ -45,11 +45,11 @@ Propozycja rozwiązania:
             Po tag: EPKS: 120, CREATE:100;
 
         Co chcemy zapisac:
-            Data, 
-            Czas - z dok do minut 
-            poziom log - mapa klucz: LEVEL,  wartsc: ilosc;
-            tagi - mapa klucz: tag, wartsc:ilosc
-            ilosc
+            Data, +
+            Czas - z dok do minut +
+            poziom log - mapa klucz: LEVEL,  wartsc: ilosc; +
+            tagi - mapa klucz: tag, wartsc:ilosc !TODO
+            ilosc laczna +
 
 
 
@@ -60,3 +60,5 @@ Przykladowe requesty:
     3. wg tagów {data + czas startowa} - {data + czas konc}
 
     *czas z dkladnoscia do minuty
+
+    jezeli pierwsze
