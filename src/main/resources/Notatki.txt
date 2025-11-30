@@ -1,0 +1,62 @@
+2025-10-08 05:51:29.795 [http-nio-8083-exec-10] INFO p.i.p.d.f.FlightDailyScheduleServiceImpl - [FlightDailySchedule, EPKS, CREATE] FlightDailySchedule created. scheduleId:eca460f0-4f82-4a02-a64f-2a4035f6b12d ()
+2024-02-05 04:54:23.678 [http-nio-8083-exec-11] INFO p.i.p.d.f.FlightDailyScheduleServiceImpl - [FlightDailySchedule, EPKS, CREATE] FlightDailySchedule test this is a test ()
+2011-10-08 05:57:13.123 [http-nio-8083-exec-12] INFO p.i.p.d.f.FlightDailyScheduleServiceImpl - [FlightDailySchedule, EPKS, CREATE] FlightDailySchedule very important message ()
+2023-10-08 09:51:29.795 [http-nio-8083-exec-13] INFO p.i.p.d.f.FlightDailyScheduleServiceImpl - FlightDailySchedule created. blablabla
+2022-10-08 11:42:29.345 [http-nio-8083-exec-15] INFO p.i.p.d.f.FlightDailyScheduleServiceImpl - [FlightDailySchedule] FlightDailySchedule created. scheduleId:miaumiau ()
+
+Notaktki:
+2025-10-08 05:51:29.795 [http-nio-8083-exec-10] INFO p.i.p.d.f.FlightDailyScheduleServiceImpl - [FlightDailySchedule, EPKS, CREATE] FlightDailySchedule created. scheduleId:eca460f0-4f82-4a02-a64f-2a4035f6b12d ()
+
+1. Zmienić regexy na kod.
+2. Wielolinijkowe logi
+
+
+Przykład:
+Czas A: Stan: 
+            2025-10-08 05:51:29.795 [http-nio-8083-exec-10] INFO p.i.p.d.f.FlightDailyScheduleServiceImpl - [FlightDailySchedule, EPKS, CREATE] FlightDailySchedule created. scheduleId:eca460f0-4f82-4a02-a64f-2a4035f6b12d ()
+Czas B: Stan: 
+            2025-10-08 05:51:29.795 [http-nio-8083-exec-10] INFO p.i.p.d.f.FlightDailyScheduleServiceImpl - [FlightDailySchedule, EPKS, CREATE] FlightDailySchedule created. scheduleId:eca460f0-4f82-4a02-a64f-2a4035f6b12d ()
+            2024-02-05 04:54:23.678 [http-nio-8083-exec-11] INFO p.i.p.d.f.FlightDailyScheduleServiceImpl - [FlightDailySchedule, EPKS, CREATE] FlightDailySchedule test this is a test ()
+            2011-10-08 05:57:13.123 [http-nio-8083-exec-12] INFO p.i.p.d.f.FlightDailyScheduleServiceImpl - [FlightDailySchedule, EPKS, CREATE] FlightDailySchedule very important message ()
+Propozycja rozwiązania: 
+    W czasie A: 
+        Offset = 0
+        2. Czytam log zaczynajacy sie od linjki nr offest+1 (1) * wiedziec kiedy sie konczy
+        3. Przetwarzam i zapisuje dane.
+        4. Aktualizuje offset (1).
+    
+    W czasie B:
+        Offset = 1
+        1. Czytam log zaczynajacy sie od linjki nr offest+1 (2) * wiedziec kiedy sie konczy
+        2. Przetwarzam i zapisuje dane.
+        3. Aktualizuje offset (2)
+        4. Zapetlic jezeli istnieje kolejna linijka
+
+    1. Offset: Zapisać numer ostatnio sprawdzanej linijki. Potem sprawdzam od ostatnio sprawdzanej linjki.
+
+        
+
+        Co chcemy pokazac uzytkownikowi:
+        
+            Statystki dotyczące logów grupowane po dacie - 
+            Data: 2025-04-10
+            Ilość: 534;
+            Po poziome log: INFO 200, ERROR; 253;
+            Po tag: EPKS: 120, CREATE:100;
+
+        Co chcemy zapisac:
+            Data, 
+            Czas - z dok do minut 
+            poziom log - mapa klucz: LEVEL,  wartsc: ilosc;
+            tagi - mapa klucz: tag, wartsc:ilosc
+            ilosc
+
+
+
+Przykladowe requesty:
+    (Dla Statystyk)
+    1. Chce statystyki wedlug daty od {data startowa} - {data konc}
+    2. Chce statystkyki wg poziomu log {data + czas startowa} - {data + czas konc}
+    3. wg tagów {data + czas startowa} - {data + czas konc}
+
+    *czas z dkladnoscia do minuty
