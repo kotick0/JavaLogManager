@@ -2,6 +2,9 @@ package logic;
 
 import domain.LogEntry;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 import java.nio.file.Paths;
 
@@ -37,11 +40,30 @@ public class FileOperations extends LogEntry {
     }
 
   private boolean isLogStart(String currentLine) {
-      return true; // TODO
+        StringBuilder sb =  new StringBuilder();
+        sb.append(currentLine);
+        sb.setLength(23);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        boolean isDate = false;
+        try {
+          LocalDateTime.parse(sb.toString(), dtf);
+          isDate = true;
+      } catch (DateTimeParseException e) {
+          isDate = false;
+      }
+      if(isDate == true && currentLine.charAt(24) == '[') {
+          return true;
+      } else {
+          return false;
+      }
+
   }
 
   private String readNextLine(Scanner scanner) {
-    return null; // TODO
+      if (scanner.hasNextLine()) {
+        return scanner.nextLine();
+      }
+      return "";
   }
 }
 
