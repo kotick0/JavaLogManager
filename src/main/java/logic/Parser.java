@@ -2,18 +2,16 @@ package logic;
 
 import domain.LogEntry;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 public class Parser extends LogEntry {
-    public void detectLine() {
-        fileOperations file =  new fileOperations();
-        String logs = file.fileRead();
-
-
-        String[] lines = logs.;
-        for (String line : lines) {
-            System.out.println(line);
-        }
-    }
+//    public void detectLine() {
+//        FileOperations file =  new FileOperations();
+//        String logs = file.readNextLog();
+//
+//
+////        String[] lines = logs.;
+//        String[] lines = new String[logs.length()]; // fixme temporary
+//        for (String line : lines) {
+//            System.out.println(line);
+//        }
+//    }
 }
