@@ -11,8 +11,7 @@ public class Parser {
     private FileOperations file = new FileOperations();
 
     public void parseLog() {
-
-       String currentLog = file.readNextLog(4).toString(); //fixme: tylko do testów
+       String currentLog = file.readNextLog(0).toString(); //fixme: tylko do testów
 
         String dateTimeString = currentLog.substring(0, 16);
        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -33,6 +32,9 @@ public class Parser {
        int indexofCloseTag = currentLog.lastIndexOf(']');
        String tagsString = currentLog.substring(indexofStartTag + 1, indexofCloseTag);
        String[] tags = tagsString.split(",");
-       System.out.println("Found date: " + dateTime + "\nFound time: " + logLevel + "\nFound tags: " + Arrays.toString(tags));
+
+       //TODO ZAPISAC W LogEntry
+        LogEntry entry = new LogEntry(dateTime, logLevel, tags);
+        System.out.println(entry.toString());
     }
 }

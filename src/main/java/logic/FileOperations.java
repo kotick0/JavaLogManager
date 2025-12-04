@@ -5,8 +5,11 @@ import domain.LogEntry;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.nio.file.Paths;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class FileOperations {
 
@@ -15,8 +18,9 @@ public class FileOperations {
 
     public NextLogResult readNextLog(int offset) {
         StringBuilder lines = new StringBuilder();
-            try (Scanner scanner = new Scanner(Paths.get("resources/test.txt"))) {
+        try (Scanner scanner = new Scanner(Paths.get("resources/test.txt"))) { //fixme
                 skipLines(offset, scanner);
+
                 // wczytać pierwszy log (pierwsze x lini, do kolejnego rozpoczęcia logu)
                 String firstLine = scanner.nextLine();
                 boolean isLogStart = isLogStart(firstLine);
@@ -41,6 +45,21 @@ public class FileOperations {
         return new NextLogResult(lines.toString(), offset);
     }
 
+//    public ArrayList<LogEntry> readfromOffset(int offset) {
+//        ArrayList<LogEntry> logEntries = new ArrayList<>();
+//        //TODO
+//    }
+
+    public Integer countLines() {
+        int lines = 0;
+        try(BufferedReader reader = new BufferedReader(new FileReader("resources/test.txt"))){ //fixme
+            while (reader.readLine() != null) {
+                lines++;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } return lines;
+    }
     // mutable on scanner
     private static void skipLines(int offset, Scanner scanner) {
         for (int i = 0; i < offset; i++) {
@@ -77,6 +96,7 @@ public class FileOperations {
       }
       return "";
   }
+
 }
 
 
