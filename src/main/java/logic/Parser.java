@@ -5,36 +5,49 @@ import domain.LogEntry;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+
+import domain.LogEntry.LevelEnum;
 
 public class Parser {
-    private FileOperations file = new FileOperations();
 
-    public void parseLog() {
-       String currentLog = file.readNextLog(0).toString(); //fixme: tylko do testów
+    public void parseLog(ArrayList<NextLogResult> logResultArrayList) {
+        LevelEnum logLevel;
+        HashMap<LevelEnum, Integer> levelMap = new HashMap<>();
+        HashMap<String, Integer> tagMap = new HashMap<>();
 
-        String dateTimeString = currentLog.substring(0, 16);
-       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-       LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, formatter);
+        for(NextLogResult logResult : logResultArrayList) {
+            String dateTimeString = logResult.toString().substring(0, 16);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime timestamp = LocalDateTime.parse(dateTimeString, formatter);
 
-       String logLevel;
-       if (currentLog.contains("DEBUG")) {
-           logLevel = "DEBUG";
-       } else if (currentLog.contains("INFO")) {
-            logLevel = "INFO";
-       } else if (currentLog.contains("WARN")) {
-           logLevel = "WARN";
-       } else {
-           logLevel = "ERROR";
-       }
+            if (logResult.toString().contains("DEBUG")) {
+                logLevel = LevelEnum.DEBUG;
+            } else if (logResult.toString().contains("INFO")) {
+                logLevel = LevelEnum.INFO;
+            } else if (logResult.toString().contains("WARN")) {
+                logLevel = LevelEnum.WARN;
+            } else {
+                logLevel = LevelEnum.ERROR;
+            }
+            levelMap.merge(logLevel, 1, Integer::sum);
 
-       int indexofStartTag = currentLog.lastIndexOf('[');
-       int indexofCloseTag = currentLog.lastIndexOf(']');
-       String tagsString = currentLog.substring(indexofStartTag + 1, indexofCloseTag);
-       String[] tags = tagsString.split(",");
+            String currentLine = logResult.toString().substring(50);
+            int indexofStartTag = currentLine.lastIndexOf('[');
+            int indexofCloseTag = currentLine.lastIndexOf(']');
 
-       //TODO ZAPISAC W LogEntry
-        LogEntry entry = new LogEntry(dateTime, logLevel, tags);
-        System.out.println(entry.toString());
+            if (indexofStartTag == -1 || indexofCloseTag == -1 || indexofStartTag > indexofCloseTag) {
+                // brak tagów – nic nie rób
+                continue;
+            }
+
+            String currentLineTags = currentLine.substring(indexofStartTag + 1, indexofCloseTag);
+            System.out.println(currentLineTags);
+
+        }
+        System.out.println(levelMap.toString()); //fixme
+
     }
 }

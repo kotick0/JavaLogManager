@@ -7,7 +7,7 @@ public record NextLogResult(
 ) {
     @Override
     public String toString() {
-        return nextLog + " offset: " + offset;
+        return nextLog;
     }
 }
 

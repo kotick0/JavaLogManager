@@ -1,15 +1,12 @@
 package logic;
 
-import domain.LogEntry;
-
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.nio.file.Paths;
-import java.io.BufferedReader;
-import java.io.FileReader;
 
 public class FileOperations {
 
@@ -20,12 +17,12 @@ public class FileOperations {
         StringBuilder lines = new StringBuilder();
         try (Scanner scanner = new Scanner(Paths.get("resources/test.txt"))) { //fixme
                 skipLines(offset, scanner);
-
                 // wczytać pierwszy log (pierwsze x lini, do kolejnego rozpoczęcia logu)
                 String firstLine = scanner.nextLine();
                 boolean isLogStart = isLogStart(firstLine);
                 if (!isLogStart) {
-                    throw new IllegalArgumentException("File starts with no-log line");
+
+                    throw new IllegalArgumentException("File starts with no-log line"); //fixme
                 }
                 lines.append(firstLine);
                 offset++;
@@ -45,21 +42,26 @@ public class FileOperations {
         return new NextLogResult(lines.toString(), offset);
     }
 
-//    public ArrayList<LogEntry> readfromOffset(int offset) {
-//        ArrayList<LogEntry> logEntries = new ArrayList<>();
-//        //TODO
-//    }
-
-    public Integer countLines() {
-        int lines = 0;
-        try(BufferedReader reader = new BufferedReader(new FileReader("resources/test.txt"))){ //fixme
-            while (reader.readLine() != null) {
-                lines++;
+    public ArrayList<NextLogResult> readAllFromOffset(int offset) {
+        ArrayList<NextLogResult> logList = new ArrayList<>(); //fixme
+        try {
+            Scanner scanner = new Scanner(Paths.get("resources/test.txt"));
+            while (scanner.hasNextLine()) {
+                NextLogResult currentLog = readNextLog(offset);
+                if(!currentLog.toString().equals("")) {
+                    logList.add(currentLog);
+                }
+                offset++;
+                if(scanner.nextLine() == null) {
+                    break;
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } return lines;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return logList;
     }
+
     // mutable on scanner
     private static void skipLines(int offset, Scanner scanner) {
         for (int i = 0; i < offset; i++) {
