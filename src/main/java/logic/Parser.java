@@ -1,14 +1,11 @@
 package logic;
 
-import domain.LogEntry;
-
-import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
+import domain.LogEntry;
 import domain.LogEntry.LevelEnum;
 
 public class Parser {
@@ -17,37 +14,58 @@ public class Parser {
         LevelEnum logLevel;
         HashMap<LevelEnum, Integer> levelMap = new HashMap<>();
         HashMap<String, Integer> tagMap = new HashMap<>();
+        LocalDateTime timestamp = LocalDateTime.now();
 
         for(NextLogResult logResult : logResultArrayList) {
             String dateTimeString = logResult.toString().substring(0, 16);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDateTime timestamp = LocalDateTime.parse(dateTimeString, formatter);
+            timestamp = parseDateTime(dateTimeString);
 
-            if (logResult.toString().contains("DEBUG")) {
-                logLevel = LevelEnum.DEBUG;
-            } else if (logResult.toString().contains("INFO")) {
-                logLevel = LevelEnum.INFO;
-            } else if (logResult.toString().contains("WARN")) {
-                logLevel = LevelEnum.WARN;
-            } else {
-                logLevel = LevelEnum.ERROR;
-            }
+            logLevel = parseLoglevel(logResult.toString());
             levelMap.merge(logLevel, 1, Integer::sum);
 
-            String currentLine = logResult.toString().substring(50);
-            int indexofStartTag = currentLine.lastIndexOf('[');
-            int indexofCloseTag = currentLine.lastIndexOf(']');
 
+            String trimmedLog = logResult.toString().substring(60).replace(" ", "");;
+            int indexofStartTag = trimmedLog.lastIndexOf('[');
+            int indexofCloseTag = trimmedLog.lastIndexOf(']');
             if (indexofStartTag == -1 || indexofCloseTag == -1 || indexofStartTag > indexofCloseTag) {
-                // brak tagów – nic nie rób
                 continue;
             }
+            String tagsTrimmed = (trimmedLog.substring(indexofStartTag + 1, indexofCloseTag) + ",").replace(" ", "");
+            String[] tags = tagsTrimmed.split(",");
+            for (String tag : tags) {
+               // System.out.println(tag);
+                tagMap.merge(tag, 1, Integer::sum);
+            }
 
-            String currentLineTags = currentLine.substring(indexofStartTag + 1, indexofCloseTag);
-            System.out.println(currentLineTags);
+            LogEntry logEntry = new LogEntry(timestamp, levelMap, tagMap);
 
+            System.out.println(logEntry.toString()); //fixme Zjada log z roku 2022 bo prawdopodonie nie znjaduje tagów \\ "[" "]"
         }
-        System.out.println(levelMap.toString()); //fixme
 
+//        System.out.println(tagMap.toString());
+//        System.out.println(levelMap.toString()); //fixme
     }
+
+
+    private LocalDateTime parseDateTime(String dateTimeLogPart) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime dateTime = LocalDateTime.parse(dateTimeLogPart, formatter);
+        return dateTime;
+    }
+
+    private LevelEnum parseLoglevel(String log) {
+        LevelEnum logLevel;
+
+        if (log.contains("DEBUG")) {
+            logLevel = LevelEnum.DEBUG;
+        } else if (log.contains("INFO")) {
+            logLevel = LevelEnum.INFO;
+        } else if (log.contains("WARN")) {
+            logLevel = LevelEnum.WARN;
+        } else {
+            logLevel = LevelEnum.ERROR;
+        }
+        return logLevel;
+    }
+
 }

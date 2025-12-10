@@ -16,7 +16,15 @@ public class LogEntry {
         this.timestamp = timestamp;
         this.levelMap = levelMap;
         this.tagMap = tagMap;
-        this.numberOfEntries = this.levelMap.size() + this.tagMap.size();
+        this.numberOfEntries = this.levelMap.size() + this.tagMap.size(); //fixme
+    }
+
+    @Override
+    public String toString() {
+        return "Timestamp: " + String.valueOf(timestamp) + "\n" +
+                "LogLevelMap: " + this.levelMap + "\n" +
+                "TagMap: " + this.tagMap + "\n" +
+                "Overall count: " + String.valueOf(this.numberOfEntries);
     }
 }
 
