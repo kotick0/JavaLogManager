@@ -4,13 +4,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import domain.LogEntry;
 import domain.LogEntry.LevelEnum;
 
 public class Parser {
 
-    public void parseLog(ArrayList<NextLogResult> logResultArrayList) {
+    public void parseLog(List<NextLogResult> logResultArrayList) {
         LevelEnum logLevel;
         HashMap<LevelEnum, Integer> levelMap = new HashMap<>();
         HashMap<String, Integer> tagMap = new HashMap<>();

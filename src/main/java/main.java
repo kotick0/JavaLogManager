@@ -9,5 +9,6 @@ void main() {
 //    System.out.println(file.readAllFromOffset(1));
 //    System.out.println(file.readAllFromOffset(1).size());
     Parser parser = new Parser();
-    parser.parseLog(file.readAllFromOffset(0));
+  List<NextLogResult> logResults = file.readAllFromOffset(0);
+  parser.parseLog(logResults);
 }
