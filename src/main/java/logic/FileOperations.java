@@ -1,7 +1,7 @@
 package logic;
 
-import java.io.IOException;
-import java.nio.file.Path;
+import domain.NextLogResult;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;

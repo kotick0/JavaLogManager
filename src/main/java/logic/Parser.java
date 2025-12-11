@@ -9,14 +9,16 @@ import java.util.Map;
 
 import domain.LogEntry;
 import domain.LogEntry.LevelEnum;
+import domain.NextLogResult;
 
 public class Parser {
 
-    public void parseLog(List<NextLogResult> logResultArrayList) {
+    public List<LogEntry> parseLog(List<NextLogResult> logResultArrayList) {
         LevelEnum logLevel;
         Map<LevelEnum, Integer> levelMap = new HashMap<>();
         Map<String, Integer> tagMap = new HashMap<>();
         LocalDateTime timestamp;
+        List<LogEntry> logEntries = new ArrayList<>();
 
         for(NextLogResult logResult : logResultArrayList) {
 
@@ -33,11 +35,13 @@ public class Parser {
                 tagMap.merge(tag, 1, Integer::sum);
             }
 
-            LogEntry logEntry = new LogEntry(timestamp,levelMap,tagMap);
-//            logEntries.add(logEntry); //fixme: Z jakiegoś powodu kiedy dodaje do listy logEntries. Wartości sa nie per log. chyba .merge ??
-            System.out.println(logEntry);
-        }
+            LogEntry logEntry = new LogEntry(timestamp, new HashMap<>(levelMap), new HashMap<>(tagMap));
+            logEntries.add(logEntry); //fixme: Z jakiegoś powodu kiedy dodaje do listy logEntries. Wartości sa nie per log. chyba .merge ??
 
+            //System.out.println("From for loop: " + logEntry + "\n\n");
+        }
+       // System.out.println("From ArrayList: " + logEntries);
+        return logEntries;
     }
 
     private LocalDateTime parseDateTime(String dateTimeLogPart) {
