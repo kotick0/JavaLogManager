@@ -17,7 +17,7 @@ public class FileOperations {
 
     public NextLogResult readNextLog(int offset) {
         StringBuilder lines = new StringBuilder();
-        try (Scanner scanner = new Scanner(Paths.get("resources/test.txt"))) { //fixme
+        try (Scanner scanner = new Scanner(Paths.get("resources/test.txt"))) { //fixme: Wybór użytkownika
                 skipLines(offset, scanner);
                 // wczytać pierwszy log (pierwsze x lini, do kolejnego rozpoczęcia logu)
           if (!scanner.hasNextLine()) {
@@ -26,7 +26,7 @@ public class FileOperations {
                 String firstLine = scanner.nextLine();
                 boolean isLogStart = isLogStart(firstLine);
                 if (!isLogStart) {
-                    throw new IllegalArgumentException("File starts with no-log line"); //fixme
+                    throw new IllegalArgumentException("File starts with no-log line");
                 }
                 lines.append(firstLine);
                 offset++;
@@ -48,7 +48,7 @@ public class FileOperations {
 
   public List<NextLogResult> readAllFromOffset(int offset) {
 
-    List<NextLogResult> logList = new ArrayList<>(); //fixme
+    List<NextLogResult> logList = new ArrayList<>();
 
     int currentOffset = offset;
     boolean shouldContinue = true;
@@ -74,7 +74,7 @@ public class FileOperations {
     }
 
     private boolean isLogStart(String currentLine) {
-      String trimmed = currentLine.trim(); // Naprawiło poprzedni błąd w którym dodawało wszystkie linijki do pierwszej
+      String trimmed = currentLine.trim();
         StringBuilder sb =  new StringBuilder();
         sb.append(trimmed);
         sb.setLength(23);

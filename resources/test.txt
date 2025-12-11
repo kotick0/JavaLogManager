@@ -4,5 +4,5 @@ test2
 test3
 2020-02-05 04:54:23.678 [http-nio-8083-exec-11] WARN p.i.p.d.f.FlightDailyScheduleServiceImpl - [FlightDailySchedule, EPKS, CREATE] FlightDailySchedule test this is a test ()
 2021-10-08 05:57:13.123 [http-nio-8083-exec-12] INFO p.i.p.d.f.FlightDailyScheduleServiceImpl - [FlightDailySchedule, EPKS, CREATE] FlightDailySchedule very important message ()
-2022-10-08 09:51:29.795 [http-nio-8083-exec-13] DEBUG p.i.p.d.f.FlightDailyScheduleServiceImpl - FlightDailySchedule created. blablabla
+2022-10-08 09:51:29.795 [http-nio-8083-exec-13] DEBUG p.i.p.d.f.FlightDailyScheduleServiceImpl - [] FlightDailySchedule created. blablabla
 2023-10-08 11:42:29.345 [http-nio-8083-exec-15] INFO p.i.p.d.f.FlightDailyScheduleServiceImpl - [FlightDailySchedule] FlightDailySchedule created. scheduleId:miaumiau ()

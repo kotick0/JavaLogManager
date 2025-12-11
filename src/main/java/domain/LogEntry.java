@@ -2,21 +2,26 @@ package domain;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.Map;
 
 public class LogEntry {
     private LocalDateTime timestamp;
     public enum LevelEnum {
         DEBUG, INFO, WARN, ERROR
     }
-    private HashMap<LevelEnum, Integer> levelMap;
-    private HashMap<String, Integer> tagMap;
+    private Map<LevelEnum, Integer> levelMap = new HashMap<LevelEnum, Integer>();
+    private Map<String, Integer> tagMap =  new HashMap<String, Integer>();
     private int numberOfEntries;
 
-    public LogEntry(LocalDateTime timestamp, HashMap<LevelEnum, Integer> levelMap, HashMap<String, Integer> tagMap) {
+    public LogEntry(LocalDateTime timestamp, Map<LevelEnum, Integer> levelMap, Map<String, Integer> tagMap) {
         this.timestamp = timestamp;
         this.levelMap = levelMap;
         this.tagMap = tagMap;
-        this.numberOfEntries = this.levelMap.size() + this.tagMap.size(); //fixme
+        this.numberOfEntries = 0;
+
+        for(Integer value : this.levelMap.values()) {
+            this.numberOfEntries += value;
+        }
     }
 
     @Override
@@ -24,7 +29,7 @@ public class LogEntry {
         return "Timestamp: " + String.valueOf(timestamp) + "\n" +
                 "LogLevelMap: " + this.levelMap + "\n" +
                 "TagMap: " + this.tagMap + "\n" +
-                "Overall count: " + String.valueOf(this.numberOfEntries);
+                "Overall count: " + this.numberOfEntries;
     }
 }
 

@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import domain.LogEntry;
 import domain.LogEntry.LevelEnum;
@@ -13,44 +14,47 @@ public class Parser {
 
     public void parseLog(List<NextLogResult> logResultArrayList) {
         LevelEnum logLevel;
-        HashMap<LevelEnum, Integer> levelMap = new HashMap<>();
-        HashMap<String, Integer> tagMap = new HashMap<>();
+        Map<LevelEnum, Integer> levelMap = new HashMap<>();
+        Map<String, Integer> tagMap = new HashMap<>();
         LocalDateTime timestamp = LocalDateTime.now();
-
+        List<LogEntry> logEntries = new ArrayList<>();
         for(NextLogResult logResult : logResultArrayList) {
-            String dateTimeString = logResult.toString().substring(0, 16);
+
+            String logResultString = logResult.nextLog();
+
+             String dateTimeString = logResultString.substring(0, 16);
             timestamp = parseDateTime(dateTimeString);
 
-            logLevel = parseLoglevel(logResult.toString());
+            logLevel = parseLoglevel(logResultString);
             levelMap.merge(logLevel, 1, Integer::sum);
 
 
-            String trimmedLog = logResult.toString().substring(60).replace(" ", "");;
+            String trimmedLog = logResultString.substring(60).replace(" ", ""); //fixme wyrzucic do oddzielnej metody
             int indexofStartTag = trimmedLog.lastIndexOf('[');
             int indexofCloseTag = trimmedLog.lastIndexOf(']');
-            if (indexofStartTag == -1 || indexofCloseTag == -1 || indexofStartTag > indexofCloseTag) {
-                continue;
+
+            if (!(trimmedLog.contains("[")) || !(trimmedLog.contains("]"))) {
+
+                continue; //fixme: Log bez nawias kwadratowy nie zostaje zapisany
+
             }
+
             String tagsTrimmed = (trimmedLog.substring(indexofStartTag + 1, indexofCloseTag) + ",").replace(" ", "");
             String[] tags = tagsTrimmed.split(",");
             for (String tag : tags) {
                // System.out.println(tag);
                 tagMap.merge(tag, 1, Integer::sum);
             }
-
-            LogEntry logEntry = new LogEntry(timestamp, levelMap, tagMap);
-
-            System.out.println(logEntry.toString()); //fixme Zjada log z roku 2022 bo prawdopodonie nie znjaduje tagów \\ "[" "]"
+            LogEntry logEntry = new LogEntry(timestamp,levelMap,tagMap);
+            System.out.println(logEntry); //fixme
         }
 
-//        System.out.println(tagMap.toString());
-//        System.out.println(levelMap.toString()); //fixme
     }
-
 
     private LocalDateTime parseDateTime(String dateTimeLogPart) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         LocalDateTime dateTime = LocalDateTime.parse(dateTimeLogPart, formatter);
+
         return dateTime;
     }
 
