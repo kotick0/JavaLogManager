@@ -29,7 +29,7 @@ public class LogEntry {
         return "Timestamp: " + String.valueOf(timestamp) + "\n" +
                 "LogLevelMap: " + this.levelMap + "\n" +
                 "TagMap: " + this.tagMap + "\n" +
-                "Overall count: " + this.numberOfEntries;
+                "Overall count: " + this.numberOfEntries + "\n";
     }
 }
 

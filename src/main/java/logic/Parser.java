@@ -16,8 +16,8 @@ public class Parser {
         LevelEnum logLevel;
         Map<LevelEnum, Integer> levelMap = new HashMap<>();
         Map<String, Integer> tagMap = new HashMap<>();
-        LocalDateTime timestamp = LocalDateTime.now();
-        List<LogEntry> logEntries = new ArrayList<>();
+        LocalDateTime timestamp;
+
         for(NextLogResult logResult : logResultArrayList) {
 
             String logResultString = logResult.nextLog();
@@ -28,25 +28,14 @@ public class Parser {
             logLevel = parseLoglevel(logResultString);
             levelMap.merge(logLevel, 1, Integer::sum);
 
-
-            String trimmedLog = logResultString.substring(60).replace(" ", ""); //fixme wyrzucic do oddzielnej metody
-            int indexofStartTag = trimmedLog.lastIndexOf('[');
-            int indexofCloseTag = trimmedLog.lastIndexOf(']');
-
-            if (!(trimmedLog.contains("[")) || !(trimmedLog.contains("]"))) {
-
-                continue; //fixme: Log bez nawias kwadratowy nie zostaje zapisany
-
-            }
-
-            String tagsTrimmed = (trimmedLog.substring(indexofStartTag + 1, indexofCloseTag) + ",").replace(" ", "");
-            String[] tags = tagsTrimmed.split(",");
-            for (String tag : tags) {
-               // System.out.println(tag);
+            String[] tags = parseTag(logResultString);
+                for (String tag : tags) {
                 tagMap.merge(tag, 1, Integer::sum);
             }
+
             LogEntry logEntry = new LogEntry(timestamp,levelMap,tagMap);
-            System.out.println(logEntry); //fixme
+//            logEntries.add(logEntry); //fixme: Z jakiegoś powodu kiedy dodaje do listy logEntries. Wartości sa nie per log. chyba .merge ??
+            System.out.println(logEntry);
         }
 
     }
@@ -73,4 +62,17 @@ public class Parser {
         return logLevel;
     }
 
+    private String[] parseTag(String log) {
+        String[] tags = new String[0];
+
+        String trimmedLog = log.substring(60).replace(" ", "");
+        int indexofStartTag = trimmedLog.lastIndexOf('[');
+        int indexofCloseTag = trimmedLog.lastIndexOf(']');
+
+        if (trimmedLog.contains("[") && trimmedLog.contains("]") && indexofCloseTag > indexofStartTag) {
+            String tagsTrimmed = (trimmedLog.substring(indexofStartTag + 1, indexofCloseTag) + ",").replace(" ", "");
+            tags = tagsTrimmed.split(",");
+        }
+        return tags;
+    }
 }
