@@ -6,9 +6,6 @@ import java.util.Map;
 
 public class LogEntry {
     private LocalDateTime timestamp;
-    public enum LevelEnum {
-        DEBUG, INFO, WARN, ERROR
-    }
     private Map<LevelEnum, Integer> levelMap = new HashMap<LevelEnum, Integer>();
     private Map<String, Integer> tagMap =  new HashMap<String, Integer>();
     private int numberOfEntries;

@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import domain.LevelEnum;
 import domain.LogEntry;
-import domain.LogEntry.LevelEnum;
 import domain.NextLogResult;
 
 public class Parser {

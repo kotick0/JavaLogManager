@@ -1,5 +1,6 @@
 package logic;
 
+import domain.LevelEnum;
 import domain.LogEntry;
 import domain.NextLogResult;
 
@@ -14,9 +15,9 @@ public class LogOperations extends Parser {
         List<NextLogResult> logResults = file.readAllFromOffset(0);
         List<LogEntry> logEntries = parseLog(logResults);
 
-        Map<LogEntry.LevelEnum, Integer> logLevelMap = new HashMap<>();
+        Map<LevelEnum, Integer> logLevelMap = new HashMap<>();
         for(LogEntry logEntry : logEntries) {
-            logLevelMap = logEntry.getLevelMap(logLevelMap.size());
+            logLevelMap = logEntry.getLevelMap();
         }
         return -1;
     }
