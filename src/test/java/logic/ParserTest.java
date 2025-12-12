@@ -23,9 +23,5 @@ class ParserTest {
     assertEquals(1, parseResultList.size());
     LogEntry parseResult = parseResultList.getFirst();
     assertEquals(LocalDateTime.of(2020, 2, 5, 4, 54), parseResult.getTimestamp());
-    assertEquals(3, parseResult.getTagMap().size());
-    assertEquals(1, parseResult.getTagMap().get("FlightDailySchedule"));
-    assertEquals(1, parseResult.getTagMap().get("EPKS"));
-    assertEquals(1, parseResult.getTagMap().get("CREATE"));
   }
 }

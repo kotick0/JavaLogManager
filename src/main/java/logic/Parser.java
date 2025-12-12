@@ -2,10 +2,7 @@ package logic;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import domain.LevelEnum;
 import domain.LogEntry;
@@ -15,32 +12,24 @@ public class Parser {
 
     public List<LogEntry> parseLog(List<NextLogResult> logResultArrayList) {
         LevelEnum logLevel;
-        Map<LevelEnum, Integer> levelMap = new HashMap<>();
-        Map<String, Integer> tagMap = new HashMap<>();
         LocalDateTime timestamp;
         List<LogEntry> logEntries = new ArrayList<>();
 
-        for(NextLogResult logResult : logResultArrayList) {
+        for (NextLogResult logResult : logResultArrayList) {
 
             String logResultString = logResult.nextLog();
 
-             String dateTimeString = logResultString.substring(0, 16);
+            String dateTimeString = logResultString.substring(0, 16);
             timestamp = parseDateTime(dateTimeString);
-
             logLevel = parseLoglevel(logResultString);
-            levelMap.merge(logLevel, 1, Integer::sum);
-
             String[] tags = parseTag(logResultString);
-                for (String tag : tags) {
-                tagMap.merge(tag, 1, Integer::sum);
-            }
+//                for (String tag : tags) {
+//                tagMap.merge(tag, 1, Integer::sum);
+//            }
 
-            LogEntry logEntry = new LogEntry(timestamp, new HashMap<>(levelMap), new HashMap<>(tagMap));
-            logEntries.add(logEntry); //fixme: Z jakiegoś powodu kiedy dodaje do listy logEntries. Wartości sa nie per log. chyba .merge ??
-
-            //System.out.println("From for loop: " + logEntry + "\n\n");
+            LogEntry logEntry = new LogEntry(timestamp, logLevel, tags);
+            logEntries.add(logEntry);
         }
-       // System.out.println("From ArrayList: " + logEntries);
         return logEntries;
     }
 
