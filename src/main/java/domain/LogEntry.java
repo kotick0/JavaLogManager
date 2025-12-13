@@ -17,18 +17,18 @@ public class LogEntry {
 
     @Override
     public String toString() {
-        return "Timestamp: " + String.valueOf(timestamp) + "\n" +
-                "LogLevel: " + this.logLevel + "\n" +
-                "Tags: " + Arrays.toString(this.tags) + "\n\n";
+        return "Timestamp: " + String.valueOf(timestamp) + "\n" + "LogLevel: " + this.logLevel + "\n" + "Tags: " + Arrays.toString(this.tags) + "\n\n";
     }
 
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
-    public LevelEnum getLevelMap() {
+
+    public LevelEnum getLevel() {
         return logLevel;
     }
-    public String[] getTagMap() {
+
+    public String[] getTags() {
         return tags;
     }
 }

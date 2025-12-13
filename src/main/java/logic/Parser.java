@@ -23,9 +23,7 @@ public class Parser {
             timestamp = parseDateTime(dateTimeString);
             logLevel = parseLoglevel(logResultString);
             String[] tags = parseTag(logResultString);
-//                for (String tag : tags) {
-//                tagMap.merge(tag, 1, Integer::sum);
-//            }
+
 
             LogEntry logEntry = new LogEntry(timestamp, logLevel, tags);
             logEntries.add(logEntry);
