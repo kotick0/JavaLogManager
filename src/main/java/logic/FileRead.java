@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Scanner;
 import java.nio.file.Paths;
 
-public class FileOperations {
+public class FileRead {
 
-    public FileOperations() {
+    public FileRead() {
     }
 
     public NextLogResult readNextLog(int offset) {

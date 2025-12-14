@@ -1,14 +1,18 @@
 import domain.LogEntry;
 import domain.NextLogResult;
-import logic.FileOperations;
+import logic.FileRead;
+import logic.FileWrite;
 import logic.LogOperations;
 import logic.Parser;
 
 void main() {
-    FileOperations file = new FileOperations();
+    FileRead file = new FileRead();
     Parser parser = new Parser();
     LogOperations logOperations = new LogOperations();
 
     List<NextLogResult> logResults = file.readAllFromOffset(0);
     List<LogEntry> parseResultList = parser.parseLog(logResults);
+    FileWrite fileWrite = new FileWrite();
+    fileWrite.writePerDate(parseResultList);
+
 }

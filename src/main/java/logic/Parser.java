@@ -1,12 +1,13 @@
 package logic;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-
 import domain.LevelEnum;
 import domain.LogEntry;
 import domain.NextLogResult;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Parser {
 
