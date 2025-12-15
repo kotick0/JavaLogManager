@@ -39,11 +39,8 @@ public class LogOperations {
     public Map<LocalDate, Integer> countDates(List<LogEntry> logEntries) {
         Map<LocalDate, Integer> datesMap = new HashMap<>();
         for (LogEntry logEntry : logEntries) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDateTime logDateTime = logEntry.getTimestamp();
-            String date = logDateTime.format(formatter);
-            LocalDate dateLog = LocalDate.parse(date, formatter);
-            datesMap.merge(dateLog, 1, Integer::sum);
+            LocalDate date = logEntry.getTimestampDate();
+            datesMap.merge(date, 1, Integer::sum);
         }
         return datesMap;
     }

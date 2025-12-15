@@ -13,6 +13,6 @@ void main() {
     List<NextLogResult> logResults = file.readAllFromOffset(0);
     List<LogEntry> parseResultList = parser.parseLog(logResults);
     FileWrite fileWrite = new FileWrite();
-    fileWrite.writePerDate(parseResultList);
+    fileWrite.CreateFilePerDateTags(parseResultList);
 
 }

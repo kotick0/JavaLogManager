@@ -1,5 +1,6 @@
 package domain;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -21,14 +22,17 @@ public class LogEntry {
     }
 
     public LocalDateTime getTimestamp() {
-        return timestamp;
+        return this.timestamp;
     }
 
+    public LocalDate getTimestampDate() {
+        return this.timestamp.toLocalDate();
+    }
     public LevelEnum getLevel() {
-        return logLevel;
+        return this.logLevel;
     }
 
     public String[] getTags() {
-        return tags;
+        return this.tags;
     }
 }
