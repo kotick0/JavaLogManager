@@ -3,37 +3,39 @@ package logic;
 import domain.LogEntry;
 import domain.NextLogResult;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 
 public class FileWrite {
-    public void CreateFilePerDateTags(List<LogEntry> logEntries) {
+    public void writeFilePerDateTags(List<LogEntry> logEntries) {
         String fileName = "";
+        int i = 0;
+        FileRead fileReader = new FileRead();
+        List<NextLogResult> logResults = fileReader.readAllFromOffset(0);
 
         for (LogEntry logEntry : logEntries) {
             if (logEntry.getTags().length > 0) {
-                fileName = String.valueOf(logEntry.getTimestampDate()) + "_" + Arrays.toString(logEntry.getTags()).replace("[", "").replace("]", "").replace(", ", "_");
+                fileName = logEntry.getTimestampDate() + "_" + Arrays.toString(logEntry.getTags()).replace("[", "").replace("]", "").replace(", ", "_");
             } else {
                 fileName = String.valueOf(logEntry.getTimestampDate());
             }
-
-            writeToFile("resources/" + fileName, ""); //fixme
+            writeToFile("resources/" + fileName, logResults.get(i).nextLog()); //fixme
+            i++;
         }
     }
 
-    public void populateFiles() {
-
-    }
-
     private void writeToFile(String path, String content) {
-        try {
-            FileWriter fw = new FileWriter(path);
-            fw.write(content);
-            fw.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        boolean isTextFound = false;
+
+        if (!isTextFound) {
+            try (FileWriter fw = new FileWriter(path, true);
+                 BufferedWriter bw = new BufferedWriter(fw);
+                 PrintWriter out = new PrintWriter(bw)) {
+                 out.println(content);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
