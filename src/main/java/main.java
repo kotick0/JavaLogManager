@@ -12,6 +12,9 @@ void main() {
 
     List<NextLogResult> logResults = file.readAllFromOffset(0);
     List<LogEntry> parseResultList = parser.parseLog(logResults);
+//    logOperations.calculateOverallStats(parseResultList);
+//    logOperations.calculateDateStats(date, parseResultList);
+
     FileWrite fileWrite = new FileWrite();
     fileWrite.writeFilePerDateTags(parseResultList);
 }
