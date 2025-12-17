@@ -10,6 +10,7 @@ import java.util.List;
 public class FileWrite {
     public void writeFilePerDateTags(List<LogEntry> logEntries) {
         String fileName = "";
+
         int i = 0;
         FileRead fileReader = new FileRead();
         List<NextLogResult> logResults = fileReader.readAllFromOffset(0);
@@ -20,22 +21,19 @@ public class FileWrite {
             } else {
                 fileName = String.valueOf(logEntry.getTimestampDate());
             }
-            writeToFile("resources/" + fileName, logResults.get(i).nextLog()); //fixme
+            writeToFile("resources/" + fileName, logResults.get(i).nextLog()); //fixme: Duplikaty, nie dziala dziala
             i++;
         }
     }
 
     private void writeToFile(String path, String content) {
-        boolean isTextFound = false;
-
-        if (!isTextFound) {
-            try (FileWriter fw = new FileWriter(path, true);
-                 BufferedWriter bw = new BufferedWriter(fw);
-                 PrintWriter out = new PrintWriter(bw)) {
-                 out.println(content);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try (FileWriter fw = new FileWriter(path, true);
+             BufferedWriter bw = new BufferedWriter(fw);
+             PrintWriter out = new PrintWriter(bw)) {
+            out.println(content);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
     }
 }

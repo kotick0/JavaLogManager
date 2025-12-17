@@ -1,3 +1,4 @@
+import domain.DateStats;
 import domain.LogEntry;
 import domain.NextLogResult;
 import logic.FileRead;
@@ -12,9 +13,11 @@ void main() {
 
     List<NextLogResult> logResults = file.readAllFromOffset(0);
     List<LogEntry> parseResultList = parser.parseLog(logResults);
-//    logOperations.calculateOverallStats(parseResultList);
-//    logOperations.calculateDateStats(date, parseResultList);
-
-    FileWrite fileWrite = new FileWrite();
-    fileWrite.writeFilePerDateTags(parseResultList);
+    //logOperations.calculateOverallStats(parseResultList);
+    LocalDate date = LocalDate.parse("2019-10-08");
+    DateStats dateStats = logOperations.calculateDateStats(date, parseResultList);
+    System.out.println(dateStats);
+    //
+//    FileWrite fileWrite = new FileWrite();
+//    fileWrite.writeFilePerDateTags(parseResultList);
 }

@@ -1,10 +1,11 @@
 package domain;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 public record OverallStats(
-  Map<LevelEnum, Integer> byDate,
-  Map<LevelEnum, Integer> byLogLevel,
-  Map<LevelEnum, Integer> byTag
+        Map<LevelEnum, Integer> byLogLevel,
+        Map<String, Integer> byTag,
+        Map<LocalDate, Integer> byDate
 ) {
 }
