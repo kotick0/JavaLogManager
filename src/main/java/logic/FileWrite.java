@@ -8,12 +8,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FileWrite {
-    public void writeFilePerDateTags(List<LogEntry> logEntries) {
-        String fileName = "";
+    public void writeLogFilePerDateTags(List<LogEntry> logEntries, String logFilePath) {
+        String fileName;
 
         int i = 0;
         FileRead fileReader = new FileRead();
-        List<NextLogResult> logResults = fileReader.readAllFromOffset(0);
+        List<NextLogResult> logResults = fileReader.readAllFromOffset(0, logFilePath);
 
         for (LogEntry logEntry : logEntries) {
             if (logEntry.getTags().length > 0) {

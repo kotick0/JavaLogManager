@@ -28,6 +28,7 @@ public class LogEntry {
     public LocalDate getTimestampDate() {
         return this.timestamp.toLocalDate();
     }
+
     public LevelEnum getLevel() {
         return this.logLevel;
     }

@@ -15,9 +15,9 @@ public class FileRead {
     public FileRead() {
     }
 
-    public NextLogResult readNextLog(int offset) {
+    public NextLogResult readNextLog(int offset, String path) {
         StringBuilder lines = new StringBuilder();
-        try (Scanner scanner = new Scanner(Paths.get("resources/test.txt"))) { //fixme: Wybór użytkownika
+        try (Scanner scanner = new Scanner(Paths.get(path))) { //fixme: Wybór użytkownika
             skipLines(offset, scanner);
             // wczytać pierwszy log (pierwsze x lini, do kolejnego rozpoczęcia logu)
             if (!scanner.hasNextLine()) {
@@ -46,14 +46,14 @@ public class FileRead {
         return new NextLogResult(lines.toString(), offset);
     }
 
-    public List<NextLogResult> readAllFromOffset(int offset) {
+    public List<NextLogResult> readAllFromOffset(int offset, String path) {
 
         List<NextLogResult> logList = new ArrayList<>();
 
         int currentOffset = offset;
         boolean shouldContinue = true;
         while (shouldContinue) {
-            NextLogResult result = readNextLog(currentOffset);
+            NextLogResult result = readNextLog(currentOffset, path);
             currentOffset = result.offset();
             if (!result.nextLog().isEmpty()) {
                 logList.add(result);
