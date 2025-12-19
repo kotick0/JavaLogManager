@@ -1,13 +1,21 @@
-import domain.DateStats;
 import domain.LogEntry;
 import domain.NextLogResult;
-import domain.OverallStats;
 import logic.FileRead;
+import logic.FileWrite;
 import logic.LogOperations;
 import logic.Parser;
 
 void main() {
-    System.out.println(this.countStatisticsFromFile(0, "resources/test2.txt"));
+//    FileWrite fileWrite = new FileWrite();
+//    FileRead fileReader = new FileRead();
+//    Parser parser = new Parser();
+//
+//    List<NextLogResult> fileReadResults = fileReader.readAllFromOffset(0, "resources/test.txt");
+//    List<LogEntry> parserResult = parser.parseLog(fileReadResults);
+
+    //fileWrite.makeFiles(parserResult);
+    //System.out.println(this.countStatisticsFromFile(0, "resources/test2.txt"));
+
 }
 public String countStatisticsFromFile(int offset,  String path) {
     FileRead fileReader = new FileRead();
