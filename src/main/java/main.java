@@ -15,6 +15,7 @@ void main() {
 
     //fileWrite.makeFiles(parserResult);
     //System.out.println(this.countStatisticsFromFile(0, "resources/test2.txt"));
+    FileWrite.writeToFile("test", 11);
 
 }
 public String countStatisticsFromFile(int offset,  String path) {

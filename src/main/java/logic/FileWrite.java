@@ -1,56 +1,56 @@
 package logic;
 
 
+import domain.LogEntry;
+import domain.NextLogResult;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+
 public class FileWrite {
+    public static void writeToFile(String inputFileName, int offset) {
+        //Sprawdzic offset
+        FileRead fileRead = new FileRead();
+        FileWrite fileWrite = new FileWrite();
+        Parser parser = new Parser();
+        List<NextLogResult> currentReadLogs;
+        List<LogEntry> currentLogsParsed;
 
+        LocalDate date;
+        currentReadLogs = fileRead.readAllFromOffset(offset, "resources/test.txt");
+        String outputFileName;
+
+        for (NextLogResult log : currentReadLogs) {
+            String logResultString = log.nextLog();
+            String dateString = logResultString.substring(0, 10);
+            date = parser.parseDate(dateString);
+            String[] tags = parser.parseTag(logResultString);
+            //System.out.println(date + " " + tags.length);
+            if (tags.length < 1) {
+                outputFileName = String.valueOf(date);
+            } else {
+                outputFileName = String.valueOf(date) + "_" + Arrays.toString(tags).replace("[", "").replace("]", "").replace(", ", "_");
+            }
+            System.out.println(outputFileName);
+            fileWrite.write("resources/" + outputFileName, logResultString); //fixme
+        }
+    }
+
+    private void write(String fileName, String content) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
+
+            writer.write(content + '\n'); //fixme
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
-//    private final Path INPUT_FILE = Paths.get("resorces/test.txt"); //fixme
-//    private final Path OFFSET_STATE_FILE = Paths.get("resorces/offset.state"); //fixme
-//    private  final Path OUTPUT_DIR = Paths.get("resources/output"); //fixme
-//    private FileRead fileReader = new FileRead();
-//
-//    public void createFilesAndAddLogs() {
-//
-//    }
-    //public void makeFiles(List<LogEntry> logEntries) {
-//    String fileName;
-//    for (LogEntry logEntry : logEntries) {
-//        if (logEntry.getTags().length > 0) {
-//            fileName = logEntry.getTimestampDate() + "_" + Arrays.toString(logEntry.getTags()).replace("[", "").replace("]", "").replace(", ", "_");
-//        } else {
-//            fileName = String.valueOf(logEntry.getTimestampDate());
-//        }
-//    }
-//}
 
 
-
-
-//    public void createFilesAndAddLogs(List<LogEntry> logEntries) {
-//        String fileName;
-//        FileRead fileReader = new FileRead();
-//
-//        //        int i = 0;
-//            if (logEntry.getTags().length > 0) {
-//                fileName = logEntry.getTimestampDate() + "_" + Arrays.toString(logEntry.getTags()).replace("[", "").replace("]", "").replace(", ", "_");
-//            } else {
-//                fileName = String.valueOf(logEntry.getTimestampDate());
-//            }
-////
-////            Path path = Paths.get("resources/" + fileName);
-////            List<NextLogResult> logResults = fileReader.readAllFromOffset(0, "resources/test.txt");
-////            writeToFile(String.valueOf(path), logResults.get(i).nextLog());
-////            i++;
-////        }
-//    }
-//
-//    private void writeToFile(String path, String content) {
-//        try (FileWriter fw = new FileWriter(path, true);
-//             BufferedWriter bw = new BufferedWriter(fw);
-//             PrintWriter out = new PrintWriter(bw)) {
-//            out.println(content);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 

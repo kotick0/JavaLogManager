@@ -4,6 +4,7 @@ import domain.LevelEnum;
 import domain.LogEntry;
 import domain.NextLogResult;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -39,6 +40,13 @@ public class Parser {
         return dateTime;
     }
 
+    public LocalDate parseDate(String dateTimeLogPart) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(dateTimeLogPart, formatter);
+
+        return date;
+    }
+
     private LevelEnum parseLoglevel(String log) {
         LevelEnum logLevel;
 
@@ -54,7 +62,7 @@ public class Parser {
         return logLevel;
     }
 
-    private String[] parseTag(String log) {
+    public String[] parseTag(String log) {
         String[] tags = new String[0];
 
         String trimmedLog = log.substring(60).replace(" ", "");
