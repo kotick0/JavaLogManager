@@ -29,14 +29,15 @@ public class FileWrite {
             String dateString = logResultString.substring(0, 10);
             date = parser.parseDate(dateString);
             String[] tags = parser.parseTag(logResultString);
-            //System.out.println(date + " " + tags.length);
-            if (tags.length < 1) {
-                outputFileName = String.valueOf(date);
-            } else {
-                outputFileName = String.valueOf(date) + "_" + Arrays.toString(tags).replace("[", "").replace("]", "").replace(", ", "_");
+
+            if (tags.length > 0) {
+                for (String tag : tags) {
+                    outputFileName = String.valueOf(date) + "_" + tag;
+                    fileWrite.write("resources/per_tag/" + outputFileName + ".log", logResultString); //fixme
+                }
             }
-            System.out.println(outputFileName);
-            fileWrite.write("resources/" + outputFileName, logResultString); //fixme
+            outputFileName = String.valueOf(date);
+            fileWrite.write("resources/per_date/" + outputFileName + ".log", logResultString); //fixme
         }
     }
 

@@ -1,0 +1,5 @@
+2019-10-08 05:51:29.795 [http-nio-8083-exec-10] INFO p.i.p.d.f.FlightDailyScheduleServiceImpl - [FlightDailySchedule, EPKS, CREATE] FlightDailySchedule created. scheduleId:eca460f0-4f82-4a02-a64f-2a4035f612d ()
+test1
+test2
+test3
+2019-10-08 04:54:23.678 [http-nio-8083-exec-11] WARN p.i.p.d.f.FlightDailyScheduleServiceImpl - [FlightDailySchedule, EPKS] FlightDailySchedule test this is a test ()
