@@ -2,13 +2,13 @@ package logic;
 
 import domain.NextLogResult;
 
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.nio.file.Paths;
 
 public class FileRead {
 
