@@ -1,4 +1,4 @@
-package domain;
+package com.log_statistcs_service.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

@@ -1,6 +1,8 @@
-package logic;
+package com.log_statistcs_service.logic;
 
-import domain.NextLogResult;
+import com.log_statistcs_service.domain.NextLogResult;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -10,7 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+@Service
 public class FileRead {
+
+    @Value("${file.input_path}")
+    private String filePath;
 
     public FileRead() {
     }

@@ -1,8 +1,8 @@
-package logic;
+package com.log_statistcs_service.logic;
 
 
-import domain.LogEntry;
-import domain.NextLogResult;
+import com.log_statistcs_service.domain.LogEntry;
+import com.log_statistcs_service.domain.NextLogResult;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -11,7 +11,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class FileWrite {
-    public static void writeToFile(String path, int offset) {
+
+    public void writeToFile(String path, int offset) {
         //Sprawdzic offset
         FileRead fileRead = new FileRead();
         FileWrite fileWrite = new FileWrite();

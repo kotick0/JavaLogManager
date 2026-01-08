@@ -1,9 +1,9 @@
-package logic;
+package com.log_statistcs_service.logic;
 
-import domain.DateStats;
-import domain.LevelEnum;
-import domain.LogEntry;
-import domain.OverallStats;
+import com.log_statistcs_service.domain.DateStats;
+import com.log_statistcs_service.domain.LevelEnum;
+import com.log_statistcs_service.domain.LogEntry;
+import com.log_statistcs_service.domain.OverallStats;
 
 import java.time.LocalDate;
 import java.util.HashMap;

@@ -1,8 +1,8 @@
-package logic;
+package com.log_statistcs_service.logic;
 
-import domain.LevelEnum;
-import domain.LogEntry;
-import domain.NextLogResult;
+import com.log_statistcs_service.domain.LevelEnum;
+import com.log_statistcs_service.domain.LogEntry;
+import com.log_statistcs_service.domain.NextLogResult;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
