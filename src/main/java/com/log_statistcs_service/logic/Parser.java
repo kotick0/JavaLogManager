@@ -3,6 +3,7 @@ package com.log_statistcs_service.logic;
 import com.log_statistcs_service.domain.LevelEnum;
 import com.log_statistcs_service.domain.LogEntry;
 import com.log_statistcs_service.domain.NextLogResult;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class Parser {
 
     public List<LogEntry> parseLog(List<NextLogResult> logResultArrayList) {

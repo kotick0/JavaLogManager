@@ -4,38 +4,16 @@ import com.log_statistcs_service.domain.DateStats;
 import com.log_statistcs_service.domain.LevelEnum;
 import com.log_statistcs_service.domain.LogEntry;
 import com.log_statistcs_service.domain.OverallStats;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@Service
 public class LogOperations {
 
-    public OverallStats calculateOverallStats(List<LogEntry> logEntries) {
-        LogOperations logOperations = new LogOperations();
-        Map<LevelEnum, Integer> byLogLevel = logOperations.countLogLevel(logEntries);
-        Map<String, Integer> byTags = logOperations.countTags(logEntries);
-        Map<LocalDate, Integer> byDate = logOperations.countDates(logEntries);
-        return new OverallStats(byLogLevel, byTags, byDate);
-    }
-
-    public DateStats calculateDateStats(LocalDate date, List<LogEntry> logEntries) {
-        Map<LevelEnum, Integer> byLogLevel= new HashMap<>();
-        Map<String, Integer> byTags = new HashMap<>();
-        for (LogEntry logEntry : logEntries) {
-            if (date.equals(logEntry.getTimestampDate())) {
-                byLogLevel.merge(logEntry.getLevel(), 1, Integer::sum);
-                String[] tags = logEntry.getTags();
-                for (String tag : tags) {
-                    byTags.merge(tag, 1, Integer::sum);
-                }
-            }
-        }
-        return new DateStats(date, byLogLevel, byTags);
-    }
-
-    private Map<LevelEnum, Integer> countLogLevel(List<LogEntry> logEntries) {
+    public Map<LevelEnum, Integer> countLogLevel(List<LogEntry> logEntries) {
         Map<LevelEnum, Integer> levelMap = new HashMap<>();
 
         for (LogEntry logEntry : logEntries) {
@@ -46,7 +24,7 @@ public class LogOperations {
         return levelMap;
     }
 
-    private Map<String, Integer> countTags(List<LogEntry> logEntries) {
+    public Map<String, Integer> countTags(List<LogEntry> logEntries) {
         Map<String, Integer> tagsMap = new HashMap<>();
 
         for (LogEntry logEntry : logEntries) {
@@ -59,7 +37,7 @@ public class LogOperations {
         return tagsMap;
     }
 
-    private Map<LocalDate, Integer> countDates(List<LogEntry> logEntries) {
+    public Map<LocalDate, Integer> countDates(List<LogEntry> logEntries) {
         Map<LocalDate, Integer> datesMap = new HashMap<>();
         for (LogEntry logEntry : logEntries) {
             LocalDate date = logEntry.getTimestampDate();
@@ -69,7 +47,7 @@ public class LogOperations {
     }
 
 
-    private int countAllLogs(List<LogEntry> logEntries) {
+    public int countAllLogs(List<LogEntry> logEntries) {
         int overallCount = 0;
         for (LogEntry logEntry : logEntries) {
             overallCount++;

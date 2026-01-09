@@ -3,25 +3,37 @@ package com.log_statistcs_service.logic;
 
 import com.log_statistcs_service.domain.LogEntry;
 import com.log_statistcs_service.domain.NextLogResult;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-
+@Service
 public class FileWrite {
+
+    private final FileRead fileRead;
+    private final Parser parser;
+
+    @Value("${dir.output_path}")
+    private String outputPath;
+
+    public FileWrite(FileRead fileRead, Parser parser) {
+        this.fileRead = fileRead;
+        this.parser = parser;
+    }
 
     public void writeToFile(String path, int offset) {
         //Sprawdzic offset
-        FileRead fileRead = new FileRead();
-        FileWrite fileWrite = new FileWrite();
-        Parser parser = new Parser();
+
         List<NextLogResult> currentReadLogs;
         List<LogEntry> currentLogsParsed;
 
         LocalDate date;
-        currentReadLogs = fileRead.readAllFromOffset(offset, path);
+        currentReadLogs = fileRead.readAllFromOffset(offset);
         String outputFileName;
 
         for (NextLogResult log : currentReadLogs) {
@@ -33,11 +45,11 @@ public class FileWrite {
             if (tags.length > 0) {
                 for (String tag : tags) {
                     outputFileName = String.valueOf(date) + "_" + tag;
-                    fileWrite.write("output_log/per_tag/" + outputFileName + ".log", logResultString); //fixme
+                    write("output_log/per_tag/" + outputFileName + ".log", logResultString); //fixme
                 }
             }
             outputFileName = String.valueOf(date);
-            fileWrite.write("output_log/per_date/" + outputFileName + ".log", logResultString); //fixme
+            write("output_log/per_date/" + outputFileName + ".log", logResultString); //fixme
         }
     }
 
