@@ -1,4 +1,4 @@
-package com.log_statistcs_service.domain;
+package com.log_statistics_service.domain;
 
 public enum LevelEnum {
     INFO, DEBUG, WARN, ERROR;

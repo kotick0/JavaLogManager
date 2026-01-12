@@ -1,9 +1,8 @@
-package com.log_statistcs_service.logic;
+package com.log_statistics_service.logic;
 
 
-import com.log_statistcs_service.domain.LogEntry;
-import com.log_statistcs_service.domain.NextLogResult;
-import jakarta.annotation.PostConstruct;
+import com.log_statistics_service.domain.LogEntry;
+import com.log_statistics_service.domain.NextLogResult;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

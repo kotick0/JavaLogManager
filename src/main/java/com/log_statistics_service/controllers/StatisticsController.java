@@ -1,13 +1,12 @@
-package com.log_statistcs_service.controllers;
+package com.log_statistics_service.controllers;
 
-import com.log_statistcs_service.domain.DateStats;
-import com.log_statistcs_service.domain.LogEntry;
-import com.log_statistcs_service.domain.NextLogResult;
-import com.log_statistcs_service.domain.OverallStats;
-import com.log_statistcs_service.logic.CalculateStats;
-import com.log_statistcs_service.logic.FileRead;
-import com.log_statistcs_service.logic.LogOperations;
-import com.log_statistcs_service.logic.Parser;
+import com.log_statistics_service.domain.DateStats;
+import com.log_statistics_service.domain.LogEntry;
+import com.log_statistics_service.domain.NextLogResult;
+import com.log_statistics_service.domain.OverallStats;
+import com.log_statistics_service.logic.CalculateStats;
+import com.log_statistics_service.logic.FileRead;
+import com.log_statistics_service.logic.Parser;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
