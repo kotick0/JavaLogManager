@@ -25,14 +25,14 @@ public class FileWrite {
         this.parser = parser;
     }
 
-    public void writeToFile(String path, int offset) {
+    public void writeToFile(String inputFile, int offset) {
         //Sprawdzic offset
 
         List<NextLogResult> currentReadLogs;
         List<LogEntry> currentLogsParsed;
 
         LocalDate date;
-        currentReadLogs = fileRead.readAllFromOffset(offset);
+        currentReadLogs = fileRead.readAllFromOffset(offset, inputFile);
         String outputFileName;
 
         for (NextLogResult log : currentReadLogs) {
@@ -44,11 +44,11 @@ public class FileWrite {
             if (tags.length > 0) {
                 for (String tag : tags) {
                     outputFileName = String.valueOf(date) + "_" + tag;
-                    write("output_log/per_tag/" + outputFileName + ".log", logResultString); //fixme
+                    write(outputPath + "/per_tag/" + outputFileName + ".log", logResultString); //fixme
                 }
             }
             outputFileName = String.valueOf(date);
-            write("output_log/per_date/" + outputFileName + ".log", logResultString); //fixme
+            write(outputPath + "/per_date/" + outputFileName + ".log", logResultString); //fixme
         }
     }
 

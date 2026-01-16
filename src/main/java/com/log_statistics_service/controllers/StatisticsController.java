@@ -1,8 +1,6 @@
 package com.log_statistics_service.controllers;
 
 import com.log_statistics_service.domain.DateStats;
-import com.log_statistics_service.domain.LogEntry;
-import com.log_statistics_service.domain.NextLogResult;
 import com.log_statistics_service.domain.OverallStats;
 import com.log_statistics_service.logic.CalculateStats;
 import com.log_statistics_service.logic.FileRead;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 public class StatisticsController {
@@ -27,20 +24,22 @@ public class StatisticsController {
     }
 
     @GetMapping("/OverallStatistics")
-    public OverallStats getOverallStatistics(@RequestParam Integer offset) {
+    public OverallStats getOverallStatistics() {
 
-        List<NextLogResult> fileReadResults = fileRead.readAllFromOffset(offset);
-        List<LogEntry> parserResult = parser.parseLog(fileReadResults);
+        //List<NextLogResult> fileReadResults = fileRead.readAllFromOffset(offset);
+        // List<LogEntry> parserResult = parser.parseLog(fileReadResults);
 
-        return calculateStats.calculateOverallStats(parserResult);
+        //return calculateStats.calculateOverallStats(parserResult);
+        return null; //fixme
     }
 
     @GetMapping("/DateStatistics")
     public DateStats getDateStatistics(@RequestParam LocalDate date) {
 
-        List<NextLogResult> fileReadResults = fileRead.readAllFromOffset(0); //fixme
-        List<LogEntry> parserResult = parser.parseLog(fileReadResults);
+        //List<NextLogResult> fileReadResults = fileRead.readAllFromOffset(0); //fixme
+        //List<LogEntry> parserResult = parser.parseLog(fileReadResults);
 
-        return calculateStats.calculateDateStats(date, parserResult);
+        //return calculateStats.calculateDateStats(date, parserResult);
+        return null;
     }
 }
