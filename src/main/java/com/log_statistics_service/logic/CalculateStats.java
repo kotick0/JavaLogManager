@@ -22,19 +22,15 @@ public class CalculateStats {
     private String outputPath;
     private final LogOperations logOperations;
 
-    @Value("${dir.statistics_path}")
-    private String statisticsPath;
-
     public CalculateStats(LogOperations logOperations) {
         this.logOperations = logOperations;
     }
 
-    public void calculateOverallStats(List<LogEntry> logEntries) {
+    public OverallStats calculateOverallStats(List<LogEntry> logEntries) {
         Map<LevelEnum, Integer> byLogLevel = logOperations.countLogLevel(logEntries);
         Map<String, Integer> byTags = logOperations.countTags(logEntries);
         Map<LocalDate, Integer> byDate = logOperations.countDates(logEntries);
-        OverallStats overallStats = new OverallStats(byLogLevel, byTags, byDate);
-        writeToJSON(overallStats);
+        return new OverallStats(byLogLevel, byTags, byDate);
     }
 
     public DateStats calculateDateStats(LocalDate date, List<LogEntry> logEntries) {
@@ -51,16 +47,5 @@ public class CalculateStats {
         }
 
         return new DateStats(date, byLogLevel, byTags);
-    }
-
-    private <Thing> void writeToJSON(Thing StatsObject) {
-        JsonMapper mapper = JsonMapper.builder()
-                .enable(SerializationFeature.INDENT_OUTPUT)
-                .build();
-
-        mapper.writeValue(
-                Path.of(statisticsPath + "/OverallStatistics.json").toFile(),
-                StatsObject
-        );
     }
 }

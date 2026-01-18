@@ -5,12 +5,19 @@ import com.log_statistics_service.database.OffsetEntriesRepository;
 import com.log_statistics_service.domain.LogEntry;
 import com.log_statistics_service.domain.NextLogResult;
 import com.log_statistics_service.domain.OverallStats;
+import org.apache.juli.logging.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,7 +33,10 @@ public class InputWatcher {
     @Value("${dir.input_path}")
     private String inputDirectory;
 
-    public InputWatcher(FileRead fileRead, OffsetEntriesRepository lastLineRepository, FileWrite fileWrite,  CalculateStats calculateStats, Parser parser) {
+    @Value("${dir.statistics_path}")
+    private String statisticsPath;
+
+    public InputWatcher(FileRead fileRead, OffsetEntriesRepository lastLineRepository, FileWrite fileWrite, CalculateStats calculateStats, Parser parser) {
         this.fileRead = fileRead;
         this.offsetEntriesRepository = lastLineRepository;
         this.fileWrite = fileWrite;
@@ -51,23 +61,33 @@ public class InputWatcher {
     @Scheduled(fixedRate = 60000)
     private void watchDirectory() {
         List<OffsetEntries> offsetEntriesList = offsetEntriesRepository.findAll();
+        List<LogEntry> logEntries = new ArrayList<>();
         for (OffsetEntries offsetEntry : offsetEntriesList) {
             String inputPath = inputDirectory + "/" + offsetEntry.getInputFile();
             List<NextLogResult> currentLogList = fileRead.readAllFromOffset(offsetEntry.getLastLine(), inputPath);
-            if(!currentLogList.isEmpty()){
+            if (!currentLogList.isEmpty()) {
                 if (currentLogList.getLast().offset() != offsetEntry.getLastLine()) {
                     // TODO Licz statystyki
-//                    List<NextLogResult> fileReadResults = fileRead.readAllFromOffset(offsetEntry.getLastLine(), inputPath);
-//                    List<LogEntry> parserResult = parser.parseLog(fileReadResults);
-                    //calculateStats.calculateOverallStats(parserResult);
+                    List<NextLogResult> fileReadResults = fileRead.readAllFromOffset(offsetEntry.getLastLine(), inputPath);
+                    logEntries.addAll(parser.parseLog(fileReadResults));
                     fileWrite.writeToFile(inputPath, offsetEntry.getLastLine());
                     offsetEntriesRepository.save(new OffsetEntries(offsetEntry.getInputFile(), currentLogList.getLast().offset()));
-
                 }
             }
-            System.out.println(currentLogList + "\n\n");
         }
         System.out.println("Watching directory: " + inputDirectory); //fixme
+        OverallStats stats = calculateStats.calculateOverallStats(logEntries);
+        writeToJSON(stats);
+    }
 
+    private <Thing> void writeToJSON(Thing StatsObject) {
+        JsonMapper mapper = JsonMapper.builder()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .build();
+        
+        mapper.writeValue(
+                Path.of(statisticsPath + "/OverallStatistics.json").toFile(),
+                StatsObject
+        );
     }
 }
