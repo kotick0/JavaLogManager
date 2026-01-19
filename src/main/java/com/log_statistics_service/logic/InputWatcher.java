@@ -5,7 +5,6 @@ import com.log_statistics_service.database.OffsetEntriesRepository;
 import com.log_statistics_service.domain.LogEntry;
 import com.log_statistics_service.domain.NextLogResult;
 import com.log_statistics_service.domain.OverallStats;
-import org.apache.juli.logging.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,8 +15,8 @@ import tools.jackson.databind.json.JsonMapper;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -63,7 +62,7 @@ public class InputWatcher {
         List<OffsetEntries> offsetEntriesList = offsetEntriesRepository.findAll();
         List<LogEntry> logEntries = new ArrayList<>();
         for (OffsetEntries offsetEntry : offsetEntriesList) {
-            String inputPath = inputDirectory + "/" + offsetEntry.getInputFile();
+            String inputPath = inputDirectory + offsetEntry.getInputFile();
             List<NextLogResult> currentLogList = fileRead.readAllFromOffset(offsetEntry.getLastLine(), inputPath);
             if (!currentLogList.isEmpty()) {
                 if (currentLogList.getLast().offset() != offsetEntry.getLastLine()) {
@@ -77,17 +76,26 @@ public class InputWatcher {
         }
         System.out.println("Watching directory: " + inputDirectory); //fixme
         OverallStats stats = calculateStats.calculateOverallStats(logEntries);
-        writeToJSON(stats);
+        writeOverallStatisticsToJSON(stats);
     }
 
-    private <Thing> void writeToJSON(Thing StatsObject) {
+    private void writeOverallStatisticsToJSON(OverallStats StatsObject) {
         JsonMapper mapper = JsonMapper.builder()
                 .enable(SerializationFeature.INDENT_OUTPUT)
                 .build();
-        
+        Path path = Path.of(statisticsPath + "OverallStatistics.json");
+        OverallStats previousStats;
+        if (Files.exists(path)) {
+            previousStats = mapper.readValue(path.toFile(), OverallStats.class);
+        } else {
+            previousStats = new OverallStats(new HashMap<>(), new HashMap<>(), new HashMap<>());
+        }
+
+        previousStats.merge(StatsObject);
+
         mapper.writeValue(
-                Path.of(statisticsPath + "/OverallStatistics.json").toFile(),
-                StatsObject
+                path.toFile(),
+                previousStats
         );
     }
 }

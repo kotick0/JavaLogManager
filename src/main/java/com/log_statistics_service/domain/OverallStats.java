@@ -8,4 +8,9 @@ public record OverallStats(
         Map<String, Integer> byTag,
         Map<LocalDate, Integer> byDate
 ) {
+    public void merge(OverallStats other) {
+        other.byLogLevel.forEach((k, v) -> this.byLogLevel.merge(k, v, Integer::sum));
+        other.byTag.forEach((k, v) -> this.byTag.merge(k, v, Integer::sum));
+        other.byDate.forEach((k, v) -> this.byDate.merge(k, v, Integer::sum));
+    }
 }
