@@ -25,7 +25,7 @@ public class LogEntry {
         return this.timestamp;
     }
 
-    public LocalDate getTimestampDate() {
+    public LocalDate getDate() {
         return this.timestamp.toLocalDate();
     }
 

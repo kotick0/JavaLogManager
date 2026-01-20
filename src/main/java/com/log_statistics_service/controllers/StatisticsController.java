@@ -1,6 +1,8 @@
 package com.log_statistics_service.controllers;
 
 import com.log_statistics_service.domain.DateStats;
+import com.log_statistics_service.domain.LogEntry;
+import com.log_statistics_service.domain.NextLogResult;
 import com.log_statistics_service.domain.OverallStats;
 import com.log_statistics_service.logic.CalculateStats;
 import com.log_statistics_service.logic.FileRead;
@@ -14,6 +16,7 @@ import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 public class StatisticsController {
@@ -41,12 +44,12 @@ public class StatisticsController {
     }
 
     @GetMapping("/DateStatistics")
-    public DateStats getDateStatistics(@RequestParam LocalDate date) {
+    public List<DateStats> getDateStatistics() {
 
-        //List<NextLogResult> fileReadResults = fileRead.readAllFromOffset(0); //fixme
-        //List<LogEntry> parserResult = parser.parseLog(fileReadResults);
+        List<NextLogResult> fileReadResults = fileRead.readAllFromOffset(0, "input_log/test.log"); //fixme
+        List<LogEntry> parserResult = parser.parseLog(fileReadResults);
 
-        //return calculateStats.calculateDateStats(date, parserResult);
-        return null;
+        return calculateStats.calculateDateStats(parserResult);
+//        return null;
     }
 }

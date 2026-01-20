@@ -38,18 +38,9 @@ public class LogOperations {
     public Map<LocalDate, Integer> countDates(List<LogEntry> logEntries) {
         Map<LocalDate, Integer> datesMap = new HashMap<>();
         for (LogEntry logEntry : logEntries) {
-            LocalDate date = logEntry.getTimestampDate();
+            LocalDate date = logEntry.getDate();
             datesMap.merge(date, 1, Integer::sum);
         }
         return datesMap;
-    }
-
-
-    public int countAllLogs(List<LogEntry> logEntries) {
-        int overallCount = 0;
-        for (LogEntry logEntry : logEntries) {
-            overallCount++;
-        }
-        return overallCount;
     }
 }

@@ -2,6 +2,7 @@ package com.log_statistics_service.logic;
 
 import com.log_statistics_service.database.OffsetEntries;
 import com.log_statistics_service.database.OffsetEntriesRepository;
+import com.log_statistics_service.domain.DateStats;
 import com.log_statistics_service.domain.LogEntry;
 import com.log_statistics_service.domain.NextLogResult;
 import com.log_statistics_service.domain.OverallStats;
@@ -66,7 +67,6 @@ public class InputWatcher {
             List<NextLogResult> currentLogList = fileRead.readAllFromOffset(offsetEntry.getLastLine(), inputPath);
             if (!currentLogList.isEmpty()) {
                 if (currentLogList.getLast().offset() != offsetEntry.getLastLine()) {
-                    // TODO Licz statystyki
                     List<NextLogResult> fileReadResults = fileRead.readAllFromOffset(offsetEntry.getLastLine(), inputPath);
                     logEntries.addAll(parser.parseLog(fileReadResults));
                     fileWrite.writeToFile(inputPath, offsetEntry.getLastLine());
@@ -74,9 +74,9 @@ public class InputWatcher {
                 }
             }
         }
-        System.out.println("Watching directory: " + inputDirectory); //fixme
-        OverallStats stats = calculateStats.calculateOverallStats(logEntries);
-        writeOverallStatisticsToJSON(stats);
+        OverallStats overallStats = calculateStats.calculateOverallStats(logEntries);
+      //  calculateStats.calculateDateStats(date, logEntries); //fixme
+        writeOverallStatisticsToJSON(overallStats);
     }
 
     private void writeOverallStatisticsToJSON(OverallStats StatsObject) {
@@ -89,6 +89,26 @@ public class InputWatcher {
             previousStats = mapper.readValue(path.toFile(), OverallStats.class);
         } else {
             previousStats = new OverallStats(new HashMap<>(), new HashMap<>(), new HashMap<>());
+        }
+
+        previousStats.merge(StatsObject);
+
+        mapper.writeValue(
+                path.toFile(),
+                previousStats
+        );
+    }
+
+    private void writeDateStatisticsToJSON(DateStats StatsObject) {
+        JsonMapper mapper = JsonMapper.builder()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .build();
+        Path path = Path.of(statisticsPath + "DateStatistics.json");
+        DateStats previousStats;
+        if (Files.exists(path)) {
+            previousStats = mapper.readValue(path.toFile(), DateStats.class);
+        } else {
+            previousStats = new DateStats(null, new HashMap<>(), new HashMap<>());
         }
 
         previousStats.merge(StatsObject);
