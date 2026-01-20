@@ -27,38 +27,37 @@ public class CalculateStats {
         return new OverallStats(byLogLevel, byTags, byDate);
     }
 
-//    public DateStats calculateDateStats(LocalDate date, List<LogEntry> logEntries) {
-//        Map<LevelEnum, Integer> byLogLevel= new HashMap<>();
-//        Map<String, Integer> byTags = new HashMap<>();
-//        for (LogEntry logEntry : logEntries) {
-//            if (.equals(logEntry.getDate())) {
-//                byLogLevel.merge(logEntry.getLevel(), 1, Integer::sum);
-//                String[] tags = logEntry.getTags();
-//                for (String tag : tags) {
-//                    byTags.merge(tag, 1, Integer::sum);
-//                }
-//            }
-//        }
-//
-//        return new DateStats(date, byLogLevel, byTags);
-//    }
     public List<DateStats> calculateDateStats(List<LogEntry> logEntries) {
-        List<DateStats> dateStats = new ArrayList<>();
-        for(LogEntry logEntry : logEntries) {
-            Map<LevelEnum, Integer> byLogLevel= new HashMap<>();
-            Map<String, Integer> byTags = new HashMap<>();
-            if(!(dateStats.contains(logEntry.getDate()))) {
-                byLogLevel.merge(logEntry.getLevel(), 1, Integer::sum);
-                String[] tags = logEntry.getTags();
-                for (String tag : tags) {
-                    byTags.merge(tag, 1, Integer::sum);
-                }
-                DateStats dateStatistic = new DateStats(logEntry.getDate(), byLogLevel, byTags);
-                dateStats.add(dateStatistic);
-            } else {
+        Map<LocalDate, DateStats> resultMap = new HashMap<>();
 
+        for (LogEntry entry : logEntries) {
+            DateStats dateStats = resultMap.get(entry.getDate());
+            if (dateStats != null) {
+                resultMap.put(entry.getDate(), updateDateStats(dateStats, entry));
+            } else {
+                resultMap.put(entry.getDate(), createNewDateStats(entry));
             }
         }
-        return dateStats;
+        return resultMap.values().stream().toList();
+    }
+
+    private DateStats createNewDateStats(LogEntry entry) {
+        Map<LevelEnum, Integer> byLogLevel = new HashMap<>();
+        byLogLevel.put(entry.getLevel(), 1);
+        Map<String, Integer> byTag = new HashMap<>();
+        Arrays.stream(entry.getTags())
+                .forEach(tag -> byTag.put(tag, 1));
+        return new DateStats(entry.getDate(), byLogLevel, byTag);
+    }
+
+    private DateStats updateDateStats(DateStats dateStats, LogEntry entry) {
+        Map<LevelEnum, Integer> byLogLevel = new HashMap<>(Map.copyOf(dateStats.byLogLevel()));
+        byLogLevel.merge(entry.getLevel(), 1, Integer::sum);
+        Map<String, Integer> byTag = new HashMap<>(Map.copyOf(dateStats.byTag()));
+        Arrays.stream(entry.getTags()).forEach(tag -> {
+            byTag.merge(tag, 1, Integer::sum);
+        });
+
+        return new DateStats(dateStats.date(), byLogLevel, byTag);
     }
 }

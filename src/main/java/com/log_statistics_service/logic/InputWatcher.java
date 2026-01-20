@@ -50,12 +50,24 @@ public class InputWatcher {
         File[] files = directory.listFiles();
 
         if (files != null) {
-            if (files.length > offsetEntriesRepository.count()) {
+            if (files.length > offsetEntriesRepository.count()) { // TODO nie opierać się na ilości (pliki mogą być np. usunięte)
                 for (File file : files) {
-                    offsetEntriesRepository.save(new OffsetEntries(file.getName(), 0));
+                    offsetEntriesRepository.save(new OffsetEntries(file.getName(), 0)); //fixme zerowanie już przetworzonych plików
                 }
             }
         }
+
+        /*
+        fixme - comment
+        T1:
+        Plik1.log <- 123
+        Plik2.log <- 64
+
+        T2:
+        Plik1.log <- 0
+        Plik2.log <- 0
+        Plik3.log <- 0
+         */
     }
 
     @Scheduled(fixedRate = 60000)
@@ -64,10 +76,10 @@ public class InputWatcher {
         List<LogEntry> logEntries = new ArrayList<>();
         for (OffsetEntries offsetEntry : offsetEntriesList) {
             String inputPath = inputDirectory + offsetEntry.getInputFile();
-            List<NextLogResult> currentLogList = fileRead.readAllFromOffset(offsetEntry.getLastLine(), inputPath);
+            List<NextLogResult> currentLogList = fileRead.readAllFromOffset(offsetEntry.getLastLine(), inputPath); //fixme czytać tylko pliki z w katalogu, a nie na podstawie wpisów z bazy
             if (!currentLogList.isEmpty()) {
                 if (currentLogList.getLast().offset() != offsetEntry.getLastLine()) {
-                    List<NextLogResult> fileReadResults = fileRead.readAllFromOffset(offsetEntry.getLastLine(), inputPath);
+                    List<NextLogResult> fileReadResults = fileRead.readAllFromOffset(offsetEntry.getLastLine(), inputPath); //fixme powtórne czytanie z pliku
                     logEntries.addAll(parser.parseLog(fileReadResults));
                     fileWrite.writeToFile(inputPath, offsetEntry.getLastLine());
                     offsetEntriesRepository.save(new OffsetEntries(offsetEntry.getInputFile(), currentLogList.getLast().offset()));
