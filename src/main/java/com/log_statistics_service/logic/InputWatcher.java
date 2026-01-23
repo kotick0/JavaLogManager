@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -50,24 +51,13 @@ public class InputWatcher {
         File[] files = directory.listFiles();
 
         if (files != null) {
-            if (files.length > offsetEntriesRepository.count()) { // TODO nie opierać się na ilości (pliki mogą być np. usunięte)
-                for (File file : files) {
-                    offsetEntriesRepository.save(new OffsetEntries(file.getName(), 0)); //fixme zerowanie już przetworzonych plików
+            for (File file : files) {
+                if (offsetEntriesRepository.findByInputFile(file.getName()).isEmpty()) {
+                    offsetEntriesRepository.save(new OffsetEntries(file.getName(), 0));
                 }
             }
         }
 
-        /*
-        fixme - comment
-        T1:
-        Plik1.log <- 123
-        Plik2.log <- 64
-
-        T2:
-        Plik1.log <- 0
-        Plik2.log <- 0
-        Plik3.log <- 0
-         */
     }
 
     @Scheduled(fixedRate = 60000)
@@ -79,16 +69,16 @@ public class InputWatcher {
             List<NextLogResult> currentLogList = fileRead.readAllFromOffset(offsetEntry.getLastLine(), inputPath); //fixme czytać tylko pliki z w katalogu, a nie na podstawie wpisów z bazy
             if (!currentLogList.isEmpty()) {
                 if (currentLogList.getLast().offset() != offsetEntry.getLastLine()) {
-                    List<NextLogResult> fileReadResults = fileRead.readAllFromOffset(offsetEntry.getLastLine(), inputPath); //fixme powtórne czytanie z pliku
-                    logEntries.addAll(parser.parseLog(fileReadResults));
-                    fileWrite.writeToFile(inputPath, offsetEntry.getLastLine());
+                    logEntries.addAll(parser.parseLog(currentLogList));
+                    fileWrite.writeToFile(currentLogList, offsetEntry.getLastLine());
                     offsetEntriesRepository.save(new OffsetEntries(offsetEntry.getInputFile(), currentLogList.getLast().offset()));
                 }
             }
         }
         OverallStats overallStats = calculateStats.calculateOverallStats(logEntries);
-      //  calculateStats.calculateDateStats(date, logEntries); //fixme
+        List<DateStats> dateStats = calculateStats.calculateDateStats(logEntries);
         writeOverallStatisticsToJSON(overallStats);
+        writeDateStatisticsToJSON(dateStats);
     }
 
     private void writeOverallStatisticsToJSON(OverallStats StatsObject) {
@@ -111,23 +101,27 @@ public class InputWatcher {
         );
     }
 
-    private void writeDateStatisticsToJSON(DateStats StatsObject) {
+    private void writeDateStatisticsToJSON(List<DateStats> StatsObject) {
         JsonMapper mapper = JsonMapper.builder()
                 .enable(SerializationFeature.INDENT_OUTPUT)
                 .build();
         Path path = Path.of(statisticsPath + "DateStatistics.json");
-        DateStats previousStats;
+        List<DateStats> previousStats;
         if (Files.exists(path)) {
-            previousStats = mapper.readValue(path.toFile(), DateStats.class);
+            //previousStats = mapper.readValue(path.toFile(), DateStats.class);
+            previousStats = mapper.readValue(path.toFile(), new TypeReference<List<DateStats>>() {});
         } else {
-            previousStats = new DateStats(null, new HashMap<>(), new HashMap<>());
+            previousStats = new ArrayList<>();
         }
+//
+        for (DateStats dateStats : previousStats) {
+            dateStats.merge(StatsObject);
 
-        previousStats.merge(StatsObject);
+        }
 
         mapper.writeValue(
                 path.toFile(),
-                previousStats
+                StatsObject
         );
     }
 }

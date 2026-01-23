@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Own ###
+output_log/per_date/*
+output_log/per_tag/*
+statistics/*

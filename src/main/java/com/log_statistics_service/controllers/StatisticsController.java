@@ -40,7 +40,7 @@ public class StatisticsController {
                 .enable(SerializationFeature.INDENT_OUTPUT)
                 .build();
         OverallStats stats = mapper.readValue(file, OverallStats.class);
-        return stats; // Spring converts this to JSON automatically
+        return stats;
     }
 
     @GetMapping("/DateStatistics")
