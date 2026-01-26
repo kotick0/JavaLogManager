@@ -2,10 +2,7 @@ package com.log_statistics_service.logic;
 
 import com.log_statistics_service.database.OffsetEntries;
 import com.log_statistics_service.database.OffsetEntriesRepository;
-import com.log_statistics_service.domain.DateStats;
-import com.log_statistics_service.domain.LogEntry;
-import com.log_statistics_service.domain.NextLogResult;
-import com.log_statistics_service.domain.OverallStats;
+import com.log_statistics_service.domain.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,9 +14,11 @@ import tools.jackson.databind.json.JsonMapper;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @EnableScheduling
@@ -82,9 +81,7 @@ public class InputWatcher {
     }
 
     private void writeOverallStatisticsToJSON(OverallStats StatsObject) {
-        JsonMapper mapper = JsonMapper.builder()
-                .enable(SerializationFeature.INDENT_OUTPUT)
-                .build();
+        JsonMapper mapper = JsonMapper.builder().enable(SerializationFeature.INDENT_OUTPUT).build();
         Path path = Path.of(statisticsPath + "OverallStatistics.json");
         OverallStats previousStats;
         if (Files.exists(path)) {
@@ -95,33 +92,37 @@ public class InputWatcher {
 
         previousStats.merge(StatsObject);
 
-        mapper.writeValue(
-                path.toFile(),
-                previousStats
-        );
+        mapper.writeValue(path.toFile(), previousStats);
     }
 
     private void writeDateStatisticsToJSON(List<DateStats> StatsObject) {
-        JsonMapper mapper = JsonMapper.builder()
-                .enable(SerializationFeature.INDENT_OUTPUT)
-                .build();
+        JsonMapper mapper = JsonMapper.builder().enable(SerializationFeature.INDENT_OUTPUT).build();
         Path path = Path.of(statisticsPath + "DateStatistics.json");
+
         List<DateStats> previousStats;
         if (Files.exists(path)) {
-            //previousStats = mapper.readValue(path.toFile(), DateStats.class);
-            previousStats = mapper.readValue(path.toFile(), new TypeReference<List<DateStats>>() {});
+            previousStats = mapper.readValue(path.toFile(), new TypeReference<List<DateStats>>() {
+            });
         } else {
-            previousStats = new ArrayList<>();
+            previousStats = List.of();
         }
-//
-        for (DateStats dateStats : previousStats) {
-            dateStats.merge(StatsObject);
-
-        }
-
-        mapper.writeValue(
-                path.toFile(),
-                StatsObject
-        );
+        List<DateStats> merged = mergeLists(previousStats, StatsObject);
+        mapper.writeValue(path.toFile(), merged);
     }
+
+
+    private List<DateStats> mergeLists(List<DateStats> previous, List<DateStats> current) {
+        Map<LocalDate, DateStats> result = new HashMap<>();
+
+        for (DateStats stats : previous) {
+            result.put(stats.date(), stats);
+        }
+
+        for (DateStats stats : current) {
+            result.merge(stats.date(), stats, DateStats::merge);
+        }
+
+        return new ArrayList<>(result.values());
+    }
+
 }

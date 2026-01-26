@@ -1,16 +1,13 @@
 package com.log_statistics_service.controllers;
 
 import com.log_statistics_service.domain.DateStats;
-import com.log_statistics_service.domain.LogEntry;
-import com.log_statistics_service.domain.NextLogResult;
 import com.log_statistics_service.domain.OverallStats;
 import com.log_statistics_service.logic.CalculateStats;
 import com.log_statistics_service.logic.FileRead;
 import com.log_statistics_service.logic.Parser;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -43,13 +40,16 @@ public class StatisticsController {
         return stats;
     }
 
-    @GetMapping("/DateStatistics")
-    public List<DateStats> getDateStatistics() {
+    @GetMapping("/DateStatistics/{date}")
+    public List<DateStats> getDateStatistics(@PathVariable("date") String date) {
+        LocalDate parsedDate = LocalDate.parse(date);
+        File file = new File(statisticsPath + "DateStatistics.json");
 
-        List<NextLogResult> fileReadResults = fileRead.readAllFromOffset(0, "input_log/test.log"); //fixme
-        List<LogEntry> parserResult = parser.parseLog(fileReadResults);
+        JsonMapper mapper = JsonMapper.builder()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .build();
 
-        return calculateStats.calculateDateStats(parserResult);
-//        return null;
+        List<DateStats> stats = mapper.readValue(file, new TypeReference<List<DateStats>>() {});;
+        return stats.stream().filter(stat -> stat.date().isEqual(parsedDate)).toList();
     }
 }
