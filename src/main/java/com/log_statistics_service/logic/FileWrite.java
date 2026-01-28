@@ -9,8 +9,12 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
+
 @Service
 public class FileWrite {
 
@@ -36,7 +40,7 @@ public class FileWrite {
             String dateString = logResultString.substring(0, 10);
             date = parser.parseDate(dateString);
             String[] tags = parser.parseTag(logResultString);
-
+            createDirectories();
             if (tags.length > 0) {
                 for (String tag : tags) {
                     outputFileName = String.valueOf(date) + "_" + tag;
@@ -56,6 +60,18 @@ public class FileWrite {
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void createDirectories() {
+        List<Path> dirs = List.of(Path.of(outputPath), Path.of(outputPath + "/per_tag"), Path.of(outputPath + "/per_date"));
+
+        for (Path directory : dirs) {
+            try {
+                Files.createDirectories(directory);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

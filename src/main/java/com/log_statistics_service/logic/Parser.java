@@ -68,11 +68,12 @@ public class Parser {
         String[] tags = new String[0];
 
         String trimmedLog = log.substring(60).replace(" ", "");
-        int indexofStartTag = trimmedLog.lastIndexOf('[');
+
+        int indexofStartTag = trimmedLog.lastIndexOf("-[");
         int indexofCloseTag = trimmedLog.lastIndexOf(']');
 
-        if (trimmedLog.contains("[") && trimmedLog.contains("]") && indexofCloseTag > indexofStartTag) {
-            String tagsTrimmed = (trimmedLog.substring(indexofStartTag + 1, indexofCloseTag) + ",").replace(" ", "");
+        if (trimmedLog.contains("-[") && trimmedLog.contains("]") && indexofCloseTag > indexofStartTag) {
+            String tagsTrimmed = (trimmedLog.substring(indexofStartTag + 2, indexofCloseTag) + ",").replace(" ", "");
             tags = tagsTrimmed.split(",");
         }
         return tags;

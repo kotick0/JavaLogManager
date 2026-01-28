@@ -12,6 +12,7 @@ import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -66,7 +67,7 @@ public class InputWatcher {
             String inputPath = inputDirectory + offsetEntry.getInputFile();
             List<NextLogResult> currentLogList = fileRead.readAllFromOffset(offsetEntry.getLastLine(), inputPath);
             if (!currentLogList.isEmpty()) {
-                if (currentLogList.getLast().offset() != offsetEntry.getLastLine()) { //fixme naprawic brak zapisu
+                if (currentLogList.getLast().offset() != offsetEntry.getLastLine()) { //fixme naprawic brak zapisu output_log przy starcie z aktywną bazą danych
                     logEntries.addAll(parser.parseLog(currentLogList));
                     fileWrite.writeToFile(currentLogList);
                     offsetEntriesRepository.save(new OffsetEntries(offsetEntry.getInputFile(), currentLogList.getLast().offset()));
@@ -120,7 +121,6 @@ public class InputWatcher {
         for (DateStats stats : current) {
             result.merge(stats.date(), stats, DateStats::merge);
         }
-
         return new ArrayList<>(result.values());
     }
 
