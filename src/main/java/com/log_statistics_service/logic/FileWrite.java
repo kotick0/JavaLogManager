@@ -25,17 +25,13 @@ public class FileWrite {
         this.parser = parser;
     }
 
-    public void writeToFile(List<NextLogResult> logResults, int offset) {
+    public void writeToFile(List<NextLogResult> logResults) {
         //Sprawdzic offset
 
-        List<NextLogResult> currentReadLogs;
-        List<LogEntry> currentLogsParsed;
-
         LocalDate date;
-        currentReadLogs = logResults;
         String outputFileName;
 
-        for (NextLogResult log : currentReadLogs) {
+        for (NextLogResult log : logResults) {
             String logResultString = log.nextLog();
             String dateString = logResultString.substring(0, 10);
             date = parser.parseDate(dateString);

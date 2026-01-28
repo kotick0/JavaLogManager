@@ -15,10 +15,8 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 @EnableScheduling
@@ -61,15 +59,16 @@ public class InputWatcher {
 
     @Scheduled(fixedRate = 60000)
     private void watchDirectory() {
-        List<OffsetEntries> offsetEntriesList = offsetEntriesRepository.findAll();
+        List<String> fileNames = Stream.of(new File(inputDirectory).listFiles()).filter(file -> !file.isDirectory()).map(File::getName).toList();
+        List<OffsetEntries> offsetEntriesList = offsetEntriesRepository.findAllByInputFileIn(fileNames);
         List<LogEntry> logEntries = new ArrayList<>();
         for (OffsetEntries offsetEntry : offsetEntriesList) {
             String inputPath = inputDirectory + offsetEntry.getInputFile();
-            List<NextLogResult> currentLogList = fileRead.readAllFromOffset(offsetEntry.getLastLine(), inputPath); //fixme czytać tylko pliki z w katalogu, a nie na podstawie wpisów z bazy
+            List<NextLogResult> currentLogList = fileRead.readAllFromOffset(offsetEntry.getLastLine(), inputPath);
             if (!currentLogList.isEmpty()) {
-                if (currentLogList.getLast().offset() != offsetEntry.getLastLine()) {
+                if (currentLogList.getLast().offset() != offsetEntry.getLastLine()) { //fixme naprawic brak zapisu
                     logEntries.addAll(parser.parseLog(currentLogList));
-                    fileWrite.writeToFile(currentLogList, offsetEntry.getLastLine());
+                    fileWrite.writeToFile(currentLogList);
                     offsetEntriesRepository.save(new OffsetEntries(offsetEntry.getInputFile(), currentLogList.getLast().offset()));
                 }
             }
