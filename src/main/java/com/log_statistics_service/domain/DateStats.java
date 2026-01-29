@@ -12,7 +12,7 @@ public record DateStats(
         Map<String, Integer> byTag
 ) {
     public static DateStats merge(DateStats stats1, DateStats stats2) {
-        if(!stats1.date().equals(stats2.date())) {
+        if (!stats1.date().equals(stats2.date())) {
             ;
         }
         Map<LevelEnum, Integer> mergedLevels = new HashMap<>(stats1.byLogLevel());

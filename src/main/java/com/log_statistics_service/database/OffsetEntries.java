@@ -10,7 +10,8 @@ public class OffsetEntries {
     private String inputFile;
     private Integer lastLine;
 
-    protected OffsetEntries() {}
+    protected OffsetEntries() {
+    }
 
     public OffsetEntries(String input_file, Integer last_line) {
         this.inputFile = input_file;

@@ -49,7 +49,9 @@ public class StatisticsController {
                 .enable(SerializationFeature.INDENT_OUTPUT)
                 .build();
 
-        List<DateStats> stats = mapper.readValue(file, new TypeReference<List<DateStats>>() {});;
+        List<DateStats> stats = mapper.readValue(file, new TypeReference<List<DateStats>>() {
+        });
+
         return stats.stream().filter(stat -> stat.date().isEqual(parsedDate)).toList();
     }
 }

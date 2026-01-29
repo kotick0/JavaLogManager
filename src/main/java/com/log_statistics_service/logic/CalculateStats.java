@@ -13,7 +13,6 @@ import java.util.*;
 @Service
 public class CalculateStats {
 
-    private String outputPath;
     private final LogOperations logOperations;
 
     public CalculateStats(LogOperations logOperations) {

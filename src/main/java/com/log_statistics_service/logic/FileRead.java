@@ -18,6 +18,15 @@ public class FileRead {
     public FileRead() {
     }
 
+    // mutable on scanner
+    private static void skipLines(int offset, Scanner scanner) {
+        for (int i = 0; i < offset; i++) {
+            if (scanner.hasNextLine()) {
+                scanner.nextLine();
+            }
+        }
+    }
+
     public NextLogResult readNextLog(int offset, String inputFile) {
 
         StringBuilder lines = new StringBuilder();
@@ -66,15 +75,6 @@ public class FileRead {
             }
         }
         return logList;
-    }
-
-    // mutable on scanner
-    private static void skipLines(int offset, Scanner scanner) {
-        for (int i = 0; i < offset; i++) {
-            if (scanner.hasNextLine()) {
-                scanner.nextLine();
-            }
-        }
     }
 
     private boolean isLogStart(String currentLine) {

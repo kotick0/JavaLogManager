@@ -27,7 +27,7 @@ class CalculateStatsTest {
 
         assertEquals(1, result.size());
         DateStats resultElement = result.getFirst();
-        assertTrue(resultElement.date().isEqual(LocalDate.of(2026,1,20)));
+        assertTrue(resultElement.date().isEqual(LocalDate.of(2026, 1, 20)));
         assertEquals(1, resultElement.byLogLevel().size());
         assertEquals(2, (int) resultElement.byLogLevel().get(LevelEnum.INFO));
 
@@ -48,7 +48,7 @@ class CalculateStatsTest {
 
         assertEquals(1, result.size());
         DateStats resultElement = result.getFirst();
-        assertTrue(resultElement.date().isEqual(LocalDate.of(2026,1,20)));
+        assertTrue(resultElement.date().isEqual(LocalDate.of(2026, 1, 20)));
         assertEquals(1, resultElement.byLogLevel().size());
         assertEquals(2, (int) resultElement.byLogLevel().get(LevelEnum.INFO));
 
@@ -70,9 +70,9 @@ class CalculateStatsTest {
         assertEquals(2, result.size());
         var sortedResult = result.stream().sorted(Comparator.comparing(DateStats::date)).toList();
         DateStats first = sortedResult.getFirst();
-        assertTrue(first.date().isEqual(LocalDate.of(2026,1,20)));
+        assertTrue(first.date().isEqual(LocalDate.of(2026, 1, 20)));
         DateStats last = sortedResult.getLast();
-        assertTrue(last.date().isEqual(LocalDate.of(2026,1,21)));
+        assertTrue(last.date().isEqual(LocalDate.of(2026, 1, 21)));
         assertEquals(1, first.byLogLevel().size());
         assertEquals(1, (int) first.byLogLevel().get(LevelEnum.INFO));
         assertEquals(1, last.byLogLevel().size());

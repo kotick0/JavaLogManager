@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface OffsetEntriesRepository extends JpaRepository<OffsetEntries, Long> {
     Optional<OffsetEntries> findByInputFile(String inputFile);
+
     List<OffsetEntries> findAllByInputFileIn(List<String> inputFiles);
 }
