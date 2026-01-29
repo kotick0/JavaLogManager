@@ -37,4 +37,4 @@ output_log/per_date/*
 output_log/per_tag/*
 input_log/*
 statistics/*
-temp/*
+temp/

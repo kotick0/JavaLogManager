@@ -44,11 +44,11 @@ public class FileWrite {
             if (tags.length > 0) {
                 for (String tag : tags) {
                     outputFileName = String.valueOf(date) + "_" + tag;
-                    write(outputPath + "/per_tag/" + outputFileName + ".log", logResultString); //fixme
+                    write(outputPath + "/per_tag/" + outputFileName + ".log", logResultString);
                 }
             }
             outputFileName = String.valueOf(date);
-            write(outputPath + "/per_date/" + outputFileName + ".log", logResultString); //fixme
+            write(outputPath + "/per_date/" + outputFileName + ".log", logResultString);
         }
     }
 
@@ -56,7 +56,7 @@ public class FileWrite {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
 
-            writer.write(content + '\n'); //fixme
+            writer.write(content + '\n');
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();

@@ -60,19 +60,28 @@ public class InputWatcher {
 
     @Scheduled(fixedRate = 60000)
     private void watchDirectory() {
-        List<String> fileNames = Stream.of(new File(inputDirectory).listFiles()).filter(file -> !file.isDirectory()).map(File::getName).toList();
+        File inputDir = new File(inputDirectory);
+        if (!inputDir.exists()) {
+            throw new RuntimeException("Provided input directory doesn't exist in filesystem. Please configure it in application.properties");
+        }
+        List<String> fileNames = Stream.of(inputDir.listFiles()).filter(file -> !file.isDirectory()).map(File::getName).toList();
         List<OffsetEntries> offsetEntriesList = offsetEntriesRepository.findAllByInputFileIn(fileNames);
         List<LogEntry> logEntries = new ArrayList<>();
         for (OffsetEntries offsetEntry : offsetEntriesList) {
             String inputPath = inputDirectory + offsetEntry.getInputFile();
             List<NextLogResult> currentLogList = fileRead.readAllFromOffset(offsetEntry.getLastLine(), inputPath);
             if (!currentLogList.isEmpty()) {
-                if (currentLogList.getLast().offset() != offsetEntry.getLastLine()) { //fixme naprawic brak zapisu output_log przy starcie z aktywną bazą danych
+                if (currentLogList.getLast().offset() != offsetEntry.getLastLine()) {
                     logEntries.addAll(parser.parseLog(currentLogList));
                     fileWrite.writeToFile(currentLogList);
                     offsetEntriesRepository.save(new OffsetEntries(offsetEntry.getInputFile(), currentLogList.getLast().offset()));
                 }
             }
+        }
+        try {
+            Files.createDirectories(Path.of(statisticsPath));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         OverallStats overallStats = calculateStats.calculateOverallStats(logEntries);
         List<DateStats> dateStats = calculateStats.calculateDateStats(logEntries);
