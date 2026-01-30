@@ -21,7 +21,7 @@ public class FileRead {
     // mutable on scanner
     private static void skipLines(int offset, Scanner scanner) {
         for (int i = 0; i < offset; i++) {
-            if (scanner.hasNextLine()) {
+            if (scanner.hasNextLine()) { //fixme 99.25% cpu time
                 scanner.nextLine();
             }
         }

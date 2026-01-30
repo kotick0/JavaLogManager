@@ -6,7 +6,7 @@ services:
     container_name: postgres_spring
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "54350:5432"
     environment:
       POSTGRES_DB: offset_database
       POSTGRES_USER: user

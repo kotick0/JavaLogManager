@@ -4,7 +4,6 @@ import com.log_statistics_service.database.OffsetEntries;
 import com.log_statistics_service.database.OffsetEntriesRepository;
 import com.log_statistics_service.domain.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import tools.jackson.core.type.TypeReference;
@@ -20,7 +19,6 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @Service
-@EnableScheduling
 public class InputWatcher {
 
     private final FileRead fileRead;
@@ -45,6 +43,7 @@ public class InputWatcher {
 
     @Scheduled(fixedRate = 120000)
     private void populateDatabase() {
+        System.out.println("Populating database...");
         File directory = new File(inputDirectory);
         File[] files = directory.listFiles();
 
@@ -60,6 +59,7 @@ public class InputWatcher {
 
     @Scheduled(fixedRate = 60000)
     private void watchDirectory() {
+        System.out.println("Watching directory...");
         File inputDir = new File(inputDirectory);
         if (!inputDir.exists()) {
             throw new RuntimeException("Provided input directory doesn't exist in filesystem. Please configure it in application.properties");
