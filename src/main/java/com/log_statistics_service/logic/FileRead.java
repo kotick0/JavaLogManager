@@ -1,9 +1,13 @@
 package com.log_statistics_service.logic;
 
 import com.log_statistics_service.domain.NextLogResult;
+import org.apache.el.stream.Stream;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Paths;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -18,11 +22,19 @@ public class FileRead {
     public FileRead() {
     }
 
-    // mutable on scanner
-    private static void skipLines(int offset, Scanner scanner) {
+    //  mutable on scanner
+//    private static void skipLines(int offset, Scanner scanner) {
+//        for (int i = 0; i < offset; i++) {
+//            //fixme 99.25% cpu time
+//            if(scanner.hasNextLine()) {
+//                scanner.nextLine();
+//            }
+//        }
+//    }
+    private static void skipLines(int offset, BufferedReader reader) throws IOException {
         for (int i = 0; i < offset; i++) {
-            if (scanner.hasNextLine()) { //fixme 99.25% cpu time
-                scanner.nextLine();
+            if (reader.readLine() == null) {
+                break;
             }
         }
     }
@@ -30,26 +42,26 @@ public class FileRead {
     public NextLogResult readNextLog(int offset, String inputFile) {
 
         StringBuilder lines = new StringBuilder();
-        try (Scanner scanner = new Scanner(Paths.get(inputFile))) { //fixme
-            skipLines(offset, scanner);
+        try (BufferedReader reader = new BufferedReader((new FileReader(inputFile)))) { //fixme
+            skipLines(offset, reader);
             // wczytać pierwszy log (pierwsze x lini, do kolejnego rozpoczęcia logu)
-            if (!scanner.hasNextLine()) {
+            String line = reader.readLine();
+            if (line == null) {
                 return new NextLogResult("", offset);
             }
-            String firstLine = scanner.nextLine();
-            boolean isLogStart = isLogStart(firstLine);
+            boolean isLogStart = isLogStart(line);
             if (!isLogStart) {
                 throw new IllegalArgumentException("File must start with a log line");
             }
-            lines.append(firstLine);
+            lines.append(line);
             offset++;
             // czytać do momentu kolejnego rozpoczęcia loga
-            while (scanner.hasNextLine()) {
-                String nextLine = readNextLine(scanner);
+            String nextLine;
+            while ((nextLine = reader.readLine()) != null) {
                 if (isLogStart(nextLine)) {
                     return new NextLogResult(lines.toString(), offset);
                 } else {
-                    lines.append(nextLine);
+                    lines.append("\n").append(nextLine);
                     offset++;
                 }
             }
@@ -96,13 +108,6 @@ public class FileRead {
             return false;
         }
 
-    }
-
-    private String readNextLine(Scanner scanner) {
-        if (scanner.hasNextLine()) {
-            return "\n" + scanner.nextLine();
-        }
-        return "";
     }
 
 }

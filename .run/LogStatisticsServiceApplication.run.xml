@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="LogStatisticsServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-    <module name="JavaLogManager" />
+    <module name="Log_Statistcs_Service" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.log_statistics_service.LogStatisticsServiceApplication" />
     <extension name="coverage">
       <pattern>
