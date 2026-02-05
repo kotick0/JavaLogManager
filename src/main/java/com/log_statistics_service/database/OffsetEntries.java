@@ -8,17 +8,17 @@ public class OffsetEntries {
 
     @Id
     private String inputFile;
-    private Integer lastLine;
+    private long lastLine;
 
     protected OffsetEntries() {
     }
 
-    public OffsetEntries(String input_file, Integer last_line) {
+    public OffsetEntries(String input_file, Long last_line) {
         this.inputFile = input_file;
         this.lastLine = last_line;
     }
 
-    public Integer getLastLine() {
+    public Long getLastLine() {
         return lastLine;
     }
 

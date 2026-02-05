@@ -1,81 +1,58 @@
 package com.log_statistics_service.logic;
 
 import com.log_statistics_service.domain.NextLogResult;
-import org.apache.el.stream.Stream;
 import org.springframework.stereotype.Service;
 
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.RandomAccessFile;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 @Service
 public class FileRead {
-
-
     public FileRead() {
     }
 
-    //  mutable on scanner
-//    private static void skipLines(int offset, Scanner scanner) {
-//        for (int i = 0; i < offset; i++) {
-//            //fixme 99.25% cpu time
-//            if(scanner.hasNextLine()) {
-//                scanner.nextLine();
-//            }
-//        }
-//    }
-    private static void skipLines(int offset, BufferedReader reader) throws IOException {
-        for (int i = 0; i < offset; i++) {
-            if (reader.readLine() == null) {
-                break;
-            }
-        }
-    }
-
-    public NextLogResult readNextLog(int offset, String inputFile) {
-
-        StringBuilder lines = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader((new FileReader(inputFile)))) { //fixme
-            skipLines(offset, reader);
-            // wczytać pierwszy log (pierwsze x lini, do kolejnego rozpoczęcia logu)
-            String line = reader.readLine();
+    public NextLogResult readNextLog(long offset, String inputFile) {
+        StringBuilder logBuilder = new StringBuilder();
+        try (RandomAccessFile raf = new RandomAccessFile(inputFile, "r")) {
+            raf.seek(offset);
+            String line = raf.readLine();
             if (line == null) {
                 return new NextLogResult("", offset);
             }
-            boolean isLogStart = isLogStart(line);
-            if (!isLogStart) {
-                throw new IllegalArgumentException("File must start with a log line");
+            if (!isLogStart(line)) {
+                throw new IllegalArgumentException("Log start line is invalid");
             }
-            lines.append(line);
-            offset++;
-            // czytać do momentu kolejnego rozpoczęcia loga
+            logBuilder.append(line).append("\n");
+            offset = raf.getFilePointer();
+
             String nextLine;
-            while ((nextLine = reader.readLine()) != null) {
+            while ((nextLine = raf.readLine()) != null) {
                 if (isLogStart(nextLine)) {
-                    return new NextLogResult(lines.toString(), offset);
+                    return new NextLogResult(logBuilder.toString(), offset);
                 } else {
-                    lines.append("\n").append(nextLine);
-                    offset++;
+                    logBuilder.append(nextLine).append("\n");
+                    offset = raf.getFilePointer();
                 }
             }
+
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return new NextLogResult(lines.toString(), offset);
+        return new NextLogResult(logBuilder.toString(), offset);
     }
 
-    public List<NextLogResult> readAllFromOffset(int offset, String inputFile) {
+
+    public List<NextLogResult> readAllFromOffset(long offset, String inputFile) {
 
         List<NextLogResult> logList = new ArrayList<>();
 
-        int currentOffset = offset;
+        long currentOffset = offset;
         boolean shouldContinue = true;
         while (shouldContinue) {
             NextLogResult result = readNextLog(currentOffset, inputFile);
@@ -109,7 +86,4 @@ public class FileRead {
         }
 
     }
-
 }
-
-

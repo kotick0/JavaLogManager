@@ -30,8 +30,6 @@ public class FileWrite {
     }
 
     public void writeToFile(List<NextLogResult> logResults) {
-        //Sprawdzic offset
-
         LocalDate date;
         String outputFileName;
 
@@ -56,7 +54,7 @@ public class FileWrite {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
 
-            writer.write(content + '\n');
+            writer.write(content);
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();

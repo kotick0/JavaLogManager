@@ -50,7 +50,7 @@ public class InputWatcher {
         if (files != null) {
             for (File file : files) {
                 if (offsetEntriesRepository.findByInputFile(file.getName()).isEmpty()) {
-                    offsetEntriesRepository.save(new OffsetEntries(file.getName(), 0));
+                    offsetEntriesRepository.save(new OffsetEntries(file.getName(), 0L));
                 }
             }
         }
