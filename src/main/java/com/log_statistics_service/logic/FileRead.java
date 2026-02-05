@@ -4,7 +4,12 @@ import com.log_statistics_service.domain.NextLogResult;
 import org.springframework.stereotype.Service;
 
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.channels.Channels;
+import java.nio.charset.StandardCharsets;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +19,7 @@ import java.util.List;
 
 @Service
 public class FileRead {
+
     public FileRead() {
     }
 
@@ -21,23 +27,26 @@ public class FileRead {
         StringBuilder logBuilder = new StringBuilder();
         try (RandomAccessFile raf = new RandomAccessFile(inputFile, "r")) {
             raf.seek(offset);
-            String line = raf.readLine();
-            if (line == null) {
+            BufferedInputStream bis = new BufferedInputStream(
+                    Channels.newInputStream(raf.getChannel()), 8192);
+
+            LineRead result = bufferedReadLine(bis);
+            if (result == null) {
                 return new NextLogResult("", offset);
             }
-            if (!isLogStart(line)) {
+            if (!isLogStart(result.line())) {
                 throw new IllegalArgumentException("Log start line is invalid");
             }
-            logBuilder.append(line).append("\n");
-            offset = raf.getFilePointer();
+            logBuilder.append(result.line()).append("\n");
+            offset += result.bytesConsumed();
 
-            String nextLine;
-            while ((nextLine = raf.readLine()) != null) {
-                if (isLogStart(nextLine)) {
+            LineRead next;
+            while ((next = bufferedReadLine(bis)) != null) {
+                if (isLogStart(next.line())) {
                     return new NextLogResult(logBuilder.toString(), offset);
                 } else {
-                    logBuilder.append(nextLine).append("\n");
-                    offset = raf.getFilePointer();
+                    logBuilder.append(next.line()).append("\n");
+                    offset += next.bytesConsumed();
                 }
             }
 
@@ -66,6 +75,33 @@ public class FileRead {
         return logList;
     }
 
+    private LineRead bufferedReadLine(BufferedInputStream bis) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(256);
+        long count = 0;
+        int b;
+        while ((b = bis.read()) != -1) {
+            count++;
+            if (b == '\n') {
+                return new LineRead(baos.toString(StandardCharsets.ISO_8859_1), count);
+            }
+            if (b == '\r') {
+                bis.mark(1);
+                int next = bis.read();
+                if (next == '\n') {
+                    count++;
+                } else if (next != -1) {
+                    bis.reset();
+                }
+                return new LineRead(baos.toString(StandardCharsets.ISO_8859_1), count);
+            }
+            baos.write(b);
+        }
+        if (baos.size() == 0) {
+            return null;
+        }
+        return new LineRead(baos.toString(StandardCharsets.ISO_8859_1), count);
+    }
+
     private boolean isLogStart(String currentLine) {
         String trimmed = currentLine.trim();
         StringBuilder sb = new StringBuilder();
@@ -86,4 +122,6 @@ public class FileRead {
         }
 
     }
+
+    private record LineRead(String line, long bytesConsumed) {}
 }
